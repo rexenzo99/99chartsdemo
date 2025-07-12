@@ -957,7 +957,7 @@ function App() {
   }
 
   // Results Screen (Step 4)
-  if (showResults && (sessionResults || finalRankings.length > 0)) {
+  if (currentScreen === 'results' && (sessionResults || finalRankings.length > 0)) {
     const getChartUrl = (chart) => {
       const intervalMap = {
         '15m': '15',
