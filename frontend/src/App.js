@@ -192,8 +192,59 @@ function App() {
   };
 
   const startHotOrNot = () => {
+    // Filter out empty tickers and randomize
+    const filledTickers = tickers.filter(ticker => ticker.trim() !== '');
+    
+    if (filledTickers.length === 0) {
+      alert('Please add some tickers before starting analysis!');
+      return;
+    }
+    
+    // Randomize the tickers
+    const randomizedTickers = [...filledTickers].sort(() => Math.random() - 0.5);
+    
+    // Convert tickers to chart format expected by hot_or_not screen
+    const mockCharts = randomizedTickers.map((ticker, index) => {
+      // Extract base symbol (remove USDT suffix)
+      const baseSymbol = ticker.replace('USDT', '');
+      
+      return {
+        chainId: 'ethereum', // Default chain
+        pairAddress: `mock_${ticker}_${index}`, // Mock pair address
+        baseToken: {
+          symbol: baseSymbol,
+          name: `${baseSymbol} Token`
+        },
+        priceUsd: (Math.random() * 100).toFixed(6), // Mock price
+        priceChange: {
+          h24: ((Math.random() - 0.5) * 20).toFixed(2) // Mock 24h change
+        },
+        volume: {
+          h24: (Math.random() * 1000000).toFixed(0) // Mock volume
+        }
+      };
+    });
+    
+    // Set the mock charts and start analysis
+    setCharts(mockCharts);
     setCurrentScreen('hot-or-not');
-    setLoading(true);
+    setCurrentIndex(0);
+    setLoading(false);
+    
+    // Generate session ID for this custom analysis
+    generateCustomSession();
+  };
+
+  const generateCustomSession = async () => {
+    try {
+      const sessionResponse = await axios.get(`${BACKEND_URL}/api/generate-session`);
+      const newSessionId = sessionResponse.data.session_id;
+      setSessionId(newSessionId);
+    } catch (error) {
+      console.error('Failed to generate session:', error);
+      // Fallback to local session ID
+      setSessionId(`custom_${Date.now()}`);
+    }
   };
 
   // Ticker Selection Screen
