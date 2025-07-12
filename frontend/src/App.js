@@ -404,10 +404,15 @@ function App() {
   const loadTrendingSearch = async () => {
     try {
       setLoading(true);
+      console.log('Loading trending search...'); // Debug log
+      
       // Use existing backend API for trending tokens
       const response = await axios.get(`${BACKEND_URL}/api/trending-charts`);
+      console.log('Trending response:', response.data); // Debug log
+      
       if (response.data.success && response.data.charts) {
         const charts = response.data.charts;
+        console.log(`Got ${charts.length} trending charts`); // Debug log
         
         // Generate a temporary session ID for metadata storage
         const metadataSessionId = `trending_${Date.now()}`;
@@ -419,6 +424,8 @@ function App() {
             charts: charts
           });
           
+          console.log('Metadata stored successfully'); // Debug log
+          
           // Store the session ID in frontend state for later use
           setTrendingMetadataSessionId(metadataSessionId);
         } catch (metadataError) {
@@ -426,7 +433,7 @@ function App() {
         }
         
         // Populate UI with ticker symbols
-        const newTickers = [...tickers];
+        const newTickers = Array(32).fill(''); // Start with empty array
         charts.forEach((chart, index) => {
           if (index < 32 && chart.baseToken?.symbol && chart.quoteToken?.symbol) {
             // Use actual pair from dexscreener data
@@ -435,12 +442,14 @@ function App() {
             newTickers[index] = `${baseSymbol}${quoteSymbol}`;
           }
         });
+        
+        console.log('Setting tickers:', newTickers.slice(0, 5)); // Debug log
         setTickers(newTickers);
       }
-      setLoading(false);
     } catch (error) {
       console.error('Failed to load trending search tokens:', error);
-      setLoading(false);
+    } finally {
+      setLoading(false); // Always reset loading state
     }
   };
 
