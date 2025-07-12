@@ -335,6 +335,7 @@ function App() {
     setTournamentPhase('winners');
     setFinalRankings([]);
     setShowConfetti(false); // Reset confetti
+    setTrendingMetadataSessionId(null); // Reset trending metadata
     setCurrentScreen('ticker-selection');
   };
 
