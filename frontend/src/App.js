@@ -83,10 +83,10 @@ function App() {
   const getCurrentChartUrl = () => {
     if (!charts[currentIndex]) return '';
     const chart = charts[currentIndex];
-    const symbol = chart.symbol.replace('BINANCE:', ''); // Remove exchange prefix for testing
+    const symbol = chart.baseToken?.symbol || 'BTC';
     
-    // Alternative: Try TradingView's basic chart URL
-    return `https://www.tradingview.com/chart/?symbol=${symbol}&interval=1D&theme=dark`;
+    // Fallback to a working chart solution - using CoinGecko chart widget
+    return `https://www.coingecko.com/en/coins/${symbol.toLowerCase()}/embedded_chart?theme=dark`;
   };
 
   const resetSession = () => {
