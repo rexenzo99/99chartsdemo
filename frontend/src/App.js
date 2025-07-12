@@ -257,6 +257,11 @@ function App() {
     setShowResults(false);
     setSessionResults(null);
     setUsingCustomTickers(false); // Reset custom ticker flag
+    setWinnersbracket([]);
+    setLosersbracket([]);
+    setEliminatedCharts([]);
+    setTournamentPhase('winners');
+    setFinalRankings([]);
     setCurrentScreen('ticker-selection');
   };
 
