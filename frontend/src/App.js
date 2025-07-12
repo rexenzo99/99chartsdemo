@@ -18,7 +18,11 @@ function App() {
   const [selectedInterval, setSelectedInterval] = useState('1h'); // Default to 1 hour
   const [tournamentCharts, setTournamentCharts] = useState([]); // Charts for tournament
   const [currentMatchup, setCurrentMatchup] = useState({ left: null, right: null }); // Current head-to-head
-  const [tournamentWinners, setTournamentWinners] = useState([]); // Winners from each round
+  const [winnersbracket, setWinnersbracket] = useState([]); // Winners bracket
+  const [losersbracket, setLosersbracket] = useState([]); // Losers bracket  
+  const [eliminatedCharts, setEliminatedCharts] = useState([]); // Double-eliminated charts
+  const [tournamentPhase, setTournamentPhase] = useState('winners'); // 'winners', 'losers', 'grandfinals'
+  const [finalRankings, setFinalRankings] = useState([]); // Top 3 results
 
   useEffect(() => {
     if (currentScreen === 'hot-or-not' && !usingCustomTickers) {
