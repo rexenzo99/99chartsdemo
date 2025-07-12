@@ -405,8 +405,27 @@ function App() {
       // Use existing backend API for trending tokens
       const response = await axios.get(`${BACKEND_URL}/api/trending-charts`);
       if (response.data.success && response.data.charts) {
+        const charts = response.data.charts;
+        
+        // Generate a temporary session ID for metadata storage
+        const metadataSessionId = `trending_${Date.now()}`;
+        
+        // Store the full charts metadata in backend
+        try {
+          await axios.post(`${BACKEND_URL}/api/store-trending-metadata`, {
+            session_id: metadataSessionId,
+            charts: charts
+          });
+          
+          // Store the session ID in frontend state for later use
+          setTrendingMetadataSessionId(metadataSessionId);
+        } catch (metadataError) {
+          console.error('Failed to store trending metadata:', metadataError);
+        }
+        
+        // Populate UI with ticker symbols
         const newTickers = [...tickers];
-        response.data.charts.forEach((chart, index) => {
+        charts.forEach((chart, index) => {
           if (index < 32 && chart.baseToken?.symbol && chart.quoteToken?.symbol) {
             // Use actual pair from dexscreener data
             const baseSymbol = chart.baseToken.symbol.toUpperCase();
