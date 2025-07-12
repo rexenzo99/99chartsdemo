@@ -266,13 +266,28 @@ function App() {
         setShowResults(true); // Directly show results for tournament
         setCurrentScreen('results'); // Ensure we switch to results screen
       } else {
-        // Losers bracket champion wins - reset winners bracket champion
-        const resetWinner = { ...winnersbracket[0], losses: 1 };
-        // Play one more time since winners bracket needs to lose twice
-        setCurrentMatchup({
-          left: winner,
-          right: resetWinner
-        });
+        // Losers bracket champion wins
+        const winnersChamp = winnersbracket[0];
+        
+        // Check if this is the first loss for winners bracket champion
+        if (winnersChamp.losses === 0) {
+          // Winners bracket champion loses for first time, play one more match
+          const resetWinner = { ...winnersChamp, losses: 1 };
+          setCurrentMatchup({
+            left: winner, // Losers bracket champion
+            right: resetWinner // Winners bracket champion with 1 loss
+          });
+        } else {
+          // Winners bracket champion has already lost once, losers bracket champion wins tournament
+          setFinalRankings([
+            winner, // 1st place (losers bracket champion)
+            winnersChamp,  // 2nd place (winners bracket champion)
+            eliminatedCharts[eliminatedCharts.length - 1] // 3rd place (last eliminated)
+          ]);
+          setShowConfetti(true); // Trigger confetti animation
+          setShowResults(true); // Directly show results for tournament
+          setCurrentScreen('results'); // Ensure we switch to results screen
+        }
       }
     }
   };
