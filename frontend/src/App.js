@@ -262,15 +262,49 @@ function App() {
 
   const setupNextMatchup = () => {
     if (tournamentPhase === 'winners' && winnersbracket.length >= 2) {
-      setCurrentMatchup({
-        left: winnersbracket[0],
-        right: winnersbracket[1]
-      });
+      // Ensure we don't match the same chart against itself
+      const availableCharts = [...winnersbracket];
+      const leftChart = availableCharts[0];
+      const rightChart = availableCharts[1];
+      
+      // Double check they're different charts
+      if (leftChart.pairAddress !== rightChart.pairAddress) {
+        setCurrentMatchup({
+          left: leftChart,
+          right: rightChart
+        });
+      } else {
+        console.error('Same chart matchup prevented:', leftChart, rightChart);
+        // If somehow same chart, try with different indices
+        if (availableCharts.length > 2) {
+          setCurrentMatchup({
+            left: availableCharts[0],
+            right: availableCharts[2]
+          });
+        }
+      }
     } else if (tournamentPhase === 'losers' && losersbracket.length >= 2) {
-      setCurrentMatchup({
-        left: losersbracket[0],
-        right: losersbracket[1]
-      });
+      // Ensure we don't match the same chart against itself  
+      const availableCharts = [...losersbracket];
+      const leftChart = availableCharts[0];
+      const rightChart = availableCharts[1];
+      
+      // Double check they're different charts
+      if (leftChart.pairAddress !== rightChart.pairAddress) {
+        setCurrentMatchup({
+          left: leftChart,
+          right: rightChart
+        });
+      } else {
+        console.error('Same chart matchup prevented:', leftChart, rightChart);
+        // If somehow same chart, try with different indices
+        if (availableCharts.length > 2) {
+          setCurrentMatchup({
+            left: availableCharts[0],
+            right: availableCharts[2]
+          });
+        }
+      }
     }
   };
 
