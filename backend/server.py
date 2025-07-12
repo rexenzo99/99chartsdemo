@@ -20,7 +20,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# MongoDB connection
+# In-memory storage for trending metadata (in production, use Redis/database)
+trending_metadata_cache = {}
 MONGO_URL = os.environ.get('MONGO_URL', 'mongodb://localhost:27017/chartsdemo')
 client = AsyncIOMotorClient(MONGO_URL)
 db = client.chartsdemo
