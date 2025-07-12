@@ -213,14 +213,16 @@ function App() {
     // Randomize the tickers
     const randomizedTickers = [...filledTickers].sort(() => Math.random() - 0.5);
     
+    console.log('Custom tickers being used:', randomizedTickers); // Debug log
+    
     // Convert tickers to chart format expected by hot_or_not screen
-    const mockCharts = randomizedTickers.map((ticker, index) => {
+    const customCharts = randomizedTickers.map((ticker, index) => {
       // Extract base symbol (remove USDT suffix)
       const baseSymbol = ticker.replace('USDT', '');
       
       return {
-        chainId: 'ethereum', // Default chain
-        pairAddress: `mock_${ticker}_${index}`, // Mock pair address
+        chainId: 'custom', // Mark as custom to distinguish from API data
+        pairAddress: `custom_${ticker}_${index}_${Date.now()}`, // Unique identifier
         baseToken: {
           symbol: baseSymbol,
           name: `${baseSymbol} Token`
@@ -231,12 +233,14 @@ function App() {
         },
         volume: {
           h24: (Math.random() * 1000000).toFixed(0) // Mock volume
-        }
+        },
+        originalTicker: ticker // Keep original ticker for URL generation
       };
     });
     
-    // Set the mock charts and start analysis
-    setCharts(mockCharts);
+    // Set flags and data for custom ticker analysis
+    setUsingCustomTickers(true);
+    setCharts(customCharts);
     setCurrentScreen('hot-or-not');
     setCurrentIndex(0);
     setLoading(false);
