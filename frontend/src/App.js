@@ -85,8 +85,8 @@ function App() {
     const chart = charts[currentIndex];
     const symbol = chart.symbol; // e.g., "BINANCE:BTCUSDT"
     
-    // TradingView embed with your custom settings
-    return `https://www.tradingview.com/widgetembed/?frameElementId=tradingview_chart&symbol=${symbol}&interval=D&hidesidetoolbar=1&hidetoptoolbar=1&symboledit=0&saveimage=0&toolbarbg=f1f3f6&studies=[]&hidevolume=1&theme=dark&style=1&timezone=Etc%2FUTC&withdateranges=0&hideideas=1&studies_overrides={}&overrides={"paneProperties.background":"#1e1e1e","paneProperties.vertGridProperties.color":"rgba(0,0,0,0)","paneProperties.horzGridProperties.color":"rgba(0,0,0,0)","symbolWatermarkProperties.transparency":100,"scalesProperties.textColor":"#ffffff"}&enabled_features=[]&disabled_features=["left_toolbar","header_widget","timeframes_toolbar","edit_buttons_in_legend","context_menus","control_bar","border_around_the_chart","volume_force_overlay","create_volume_indicator_by_default"]`;
+    // Simplified TradingView embed URL
+    return `https://www.tradingview.com/widgetembed/?frameElementId=tradingview_chart&symbol=${symbol}&interval=1D&hidesidetoolbar=1&hidetoptoolbar=1&symboledit=0&saveimage=0&toolbarbg=000000&studies=%5B%5D&hidevolume=1&theme=dark&style=1&timezone=Etc%2FUTC&withdateranges=0&hideideas=1&calendar=0&hotlist=0&searchesindicators=0&details=0`;
   };
 
   const resetSession = () => {
