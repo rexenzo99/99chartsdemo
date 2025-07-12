@@ -598,6 +598,19 @@ function App() {
       }
     };
 
+    const getTournamentStatus = () => {
+      const totalCharts = winnersbracket.length + losersbracket.length + eliminatedCharts.length;
+      return {
+        phase: tournamentPhase === 'winners' ? 'Winners Bracket' : 
+               tournamentPhase === 'losers' ? 'Losers Bracket' : 'Grand Finals',
+        remaining: winnersbracket.length + losersbracket.length,
+        eliminated: eliminatedCharts.length,
+        total: totalCharts
+      };
+    };
+
+    const status = getTournamentStatus();
+
     return (
       <div className="min-h-screen bg-gray-900 p-6">
         <div className="max-w-7xl mx-auto">
@@ -608,7 +621,7 @@ function App() {
               Choose the better chart - Head to Head
             </p>
             <div className="mt-4 text-sm text-gray-400">
-              Remaining charts: {tournamentCharts.length} | Winners: {tournamentWinners.length}
+              {status.phase} | Remaining: {status.remaining} | Eliminated: {status.eliminated}
             </div>
           </div>
 
@@ -618,12 +631,8 @@ function App() {
               {/* Left Chart */}
               <div className="space-y-4">
                 <div className="text-center">
-                  <h3 className="text-xl font-bold text-white mb-2">
-                    {currentMatchup.left?.baseToken?.symbol || 'Chart A'}
-                  </h3>
-                  <p className="text-gray-400">
-                    {currentMatchup.left?.baseToken?.name || 'Token A'}
-                  </p>
+                  <h3 className="text-xl font-bold text-white mb-2">Chart A</h3>
+                  <p className="text-gray-400">Anonymous Chart</p>
                 </div>
                 <div 
                   className="w-full aspect-square border-4 rounded-lg overflow-hidden bg-gray-800 cursor-pointer transition-all duration-300 hover:border-blue-500 border-gray-600"
@@ -633,7 +642,7 @@ function App() {
                     key={`tournament-left-${currentMatchup.left?.pairAddress}-${selectedInterval}`}
                     src={getChartUrl(currentMatchup.left)}
                     className="w-full h-full"
-                    title={`Chart for ${currentMatchup.left?.baseToken?.symbol || 'Chart A'}`}
+                    title="Anonymous Chart A"
                     frameBorder="0"
                   />
                 </div>
@@ -642,7 +651,7 @@ function App() {
                     onClick={() => selectTournamentWinner(currentMatchup.left)}
                     className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold text-lg transition-colors border-2 border-blue-500 shadow-lg"
                   >
-                    Choose This Chart
+                    Choose Chart A
                   </button>
                 </div>
               </div>
@@ -650,12 +659,8 @@ function App() {
               {/* Right Chart */}
               <div className="space-y-4">
                 <div className="text-center">
-                  <h3 className="text-xl font-bold text-white mb-2">
-                    {currentMatchup.right?.baseToken?.symbol || 'Chart B'}
-                  </h3>
-                  <p className="text-gray-400">
-                    {currentMatchup.right?.baseToken?.name || 'Token B'}
-                  </p>
+                  <h3 className="text-xl font-bold text-white mb-2">Chart B</h3>
+                  <p className="text-gray-400">Anonymous Chart</p>
                 </div>
                 <div 
                   className="w-full aspect-square border-4 rounded-lg overflow-hidden bg-gray-800 cursor-pointer transition-all duration-300 hover:border-blue-500 border-gray-600"
@@ -665,7 +670,7 @@ function App() {
                     key={`tournament-right-${currentMatchup.right?.pairAddress}-${selectedInterval}`}
                     src={getChartUrl(currentMatchup.right)}
                     className="w-full h-full"
-                    title={`Chart for ${currentMatchup.right?.baseToken?.symbol || 'Chart B'}`}
+                    title="Anonymous Chart B"
                     frameBorder="0"
                   />
                 </div>
@@ -674,7 +679,7 @@ function App() {
                     onClick={() => selectTournamentWinner(currentMatchup.right)}
                     className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold text-lg transition-colors border-2 border-blue-500 shadow-lg"
                   >
-                    Choose This Chart
+                    Choose Chart B
                   </button>
                 </div>
               </div>
@@ -691,10 +696,8 @@ function App() {
           {/* Tournament Progress */}
           <div className="text-center">
             <div className="bg-gray-800 rounded-lg p-4 border border-gray-600 inline-block">
-              <span className="text-gray-300">Tournament Progress: </span>
-              <span className="text-blue-400 font-bold">
-                Round {Math.ceil(Math.log2(tournamentCharts.length))} 
-              </span>
+              <span className="text-gray-300">Tournament Status: </span>
+              <span className="text-blue-400 font-bold">{status.phase}</span>
             </div>
           </div>
         </div>
