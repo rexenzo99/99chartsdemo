@@ -89,10 +89,10 @@ function App() {
     // This tests if the issue is caused by switching between different token pairs
     if (charts.length > 0) {
       const firstChart = charts[0];
-      return `https://dexscreener.com/${firstChart.chainId}/${firstChart.pairAddress}?embed=1&theme=dark&trades=0&info=0`;
+      return `https://dexscreener.com/${firstChart.chainId}/${firstChart.pairAddress}?embed=1&theme=dark&trades=0&info=0&hidegrid=1&hidevolume=1&hidestatus=1&hidelegend=1&hide_top_toolbar=1`;
     }
     // Fallback to BTC/USDT if charts not loaded yet
-    return `https://dexscreener.com/bsc/0x61eb789d75a95caa3ff50ed7e47b96c132fec082?embed=1&theme=dark&trades=0&info=0`;
+    return `https://dexscreener.com/bsc/0x61eb789d75a95caa3ff50ed7e47b96c132fec082?embed=1&theme=dark&trades=0&info=0&hidegrid=1&hidevolume=1&hidestatus=1&hidelegend=1&hide_top_toolbar=1`;
   };
 
   const getCurrentChartUrl = () => {
@@ -104,8 +104,8 @@ function App() {
     const pair = charts[currentIndex];
     const chainId = pair.chainId;
     const pairAddress = pair.pairAddress;
-    // Try embed with chart tab default - preserving custom settings while hiding other tabs
-    return `https://dexscreener.com/${chainId}/${pairAddress}?embed=1&theme=dark&trades=0&info=0&tab=chart`;
+    // Apply your custom settings via URL parameters
+    return `https://dexscreener.com/${chainId}/${pairAddress}?embed=1&theme=dark&trades=0&info=0&hidegrid=1&hidevolume=1&hidestatus=1&hidelegend=1&hide_top_toolbar=1&tab=chart`;
   };
 
   const startApp = () => {
