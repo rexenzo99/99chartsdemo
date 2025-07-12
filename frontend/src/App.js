@@ -164,7 +164,8 @@ function App() {
       return {
         ...originalChart,
         choiceIndex: choice.chart_index,
-        losses: 0 // Track losses for double elimination
+        losses: 0, // Track losses for double elimination
+        tournamentId: `${originalChart.pairAddress || originalChart.baseToken?.symbol}_${choice.chart_index}` // Unique ID
       };
     });
 
@@ -174,17 +175,28 @@ function App() {
       return;
     }
 
+    // Remove any potential duplicates by pairAddress
+    const uniqueTournamentPool = tournamentPool.filter((chart, index, arr) => 
+      arr.findIndex(c => c.pairAddress === chart.pairAddress) === index
+    );
+
+    if (uniqueTournamentPool.length < 2) {
+      // Still not enough unique charts, show results directly
+      showSessionResults();
+      return;
+    }
+
     // Set up double elimination tournament
-    setTournamentCharts(tournamentPool);
-    setWinnersbracket([...tournamentPool]);
+    setTournamentCharts(uniqueTournamentPool);
+    setWinnersbracket([...uniqueTournamentPool]);
     setLosersbracket([]);
     setEliminatedCharts([]);
     setTournamentPhase('winners');
     
-    // Start first matchup
+    // Start first matchup - ensure different charts
     setCurrentMatchup({
-      left: tournamentPool[0],
-      right: tournamentPool[1]
+      left: uniqueTournamentPool[0],
+      right: uniqueTournamentPool[1]
     });
     setCurrentScreen('tournament');
   };
