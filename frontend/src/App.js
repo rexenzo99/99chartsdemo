@@ -209,9 +209,10 @@ function App() {
       const updatedLoser = { ...loser, losses: loser.losses + 1 };
       setLosersbracket(prev => [...prev, updatedLoser]);
       
-      // Remove both from winners bracket
+      // Remove both from winners bracket using unique identifiers
       const remainingWinners = winnersbracket.filter(chart => 
-        chart !== currentMatchup.left && chart !== currentMatchup.right
+        chart.tournamentId !== currentMatchup.left.tournamentId && 
+        chart.tournamentId !== currentMatchup.right.tournamentId
       );
       
       // Add winner back to winners bracket
@@ -221,7 +222,9 @@ function App() {
       if (updatedWinners.length === 1) {
         // Winners bracket complete, start losers bracket
         setTournamentPhase('losers');
-        setupNextMatchup();
+        if (losersbracket.length > 0 || updatedLoser) {
+          setupNextMatchup();
+        }
       } else {
         // Continue winners bracket
         setupNextMatchup();
@@ -231,9 +234,10 @@ function App() {
       const updatedLoser = { ...loser, losses: loser.losses + 1 };
       setEliminatedCharts(prev => [...prev, updatedLoser]);
       
-      // Continue in losers bracket
+      // Continue in losers bracket using unique identifiers
       const remainingLosers = losersbracket.filter(chart =>
-        chart !== currentMatchup.left && chart !== currentMatchup.right
+        chart.tournamentId !== currentMatchup.left.tournamentId && 
+        chart.tournamentId !== currentMatchup.right.tournamentId
       );
       
       const updatedLosers = [...remainingLosers, winner];
@@ -251,7 +255,7 @@ function App() {
       }
     } else if (tournamentPhase === 'grandfinals') {
       // Grand finals logic
-      if (winner === winnersbracket[0]) {
+      if (winner.tournamentId === winnersbracket[0].tournamentId) {
         // Winners bracket champion wins - tournament over
         setFinalRankings([
           winner, // 1st place
