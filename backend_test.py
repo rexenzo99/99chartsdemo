@@ -87,7 +87,7 @@ class ChartsDemoAPITester:
             return False
     
     def test_trending_charts(self):
-        """Test GET /api/trending-charts endpoint"""
+        """Test GET /api/trending-charts endpoint with enhanced validation for new implementation"""
         try:
             response = requests.get(f"{self.base_url}/api/trending-charts", timeout=30)
             if response.status_code == 200:
@@ -112,16 +112,88 @@ class ChartsDemoAPITester:
                     self.log_test("Trending charts count", False, f"Total mismatch: {total} vs {len(charts)}")
                     return False
                 
-                # Validate chart data structure
+                # Enhanced validation for new implementation
+                self.log_test("Trending charts basic", True, f"Retrieved {len(charts)} charts")
+                
+                # Validate chart data structure and content
                 if charts:
                     first_chart = charts[0]
-                    expected_chart_fields = ["pairAddress"]
+                    expected_chart_fields = ["pairAddress", "baseToken", "quoteToken", "volume"]
                     missing_chart_fields = [field for field in expected_chart_fields if field not in first_chart]
                     if missing_chart_fields:
                         self.log_test("Chart data structure", False, f"Missing chart fields: {missing_chart_fields}")
                         return False
                 
-                self.log_test("Trending charts", True, f"Retrieved {len(charts)} charts")
+                # Test volume filtering (all pairs should have >$10k 24h volume)
+                low_volume_pairs = []
+                for i, chart in enumerate(charts):
+                    volume_24h = chart.get('volume', {}).get('h24', 0)
+                    if volume_24h is not None:
+                        try:
+                            volume_float = float(volume_24h)
+                            if volume_float <= 10000:
+                                low_volume_pairs.append(f"Chart {i}: ${volume_float:,.2f}")
+                        except (ValueError, TypeError):
+                            low_volume_pairs.append(f"Chart {i}: Invalid volume data")
+                
+                if low_volume_pairs:
+                    self.log_test("Volume filtering", False, f"Found {len(low_volume_pairs)} pairs with ≤$10k volume: {low_volume_pairs[:3]}")
+                else:
+                    self.log_test("Volume filtering", True, "All pairs have >$10k 24h volume")
+                
+                # Check for current/relevant tokens mentioned in the update
+                current_tokens = ["ALT", "PUMP", "IPO", "POWELL", "MAGA", "VIRTUAL", "MOODENG", "GOAT", "SPX", "PNUT", "FRED", "CHILLGUY", "ZEREBRO", "TURBO", "ACT", "WIF", "POPCAT", "BONK", "PEPE", "SHIB", "DOGE", "FLOKI", "MEME"]
+                found_current_tokens = []
+                for chart in charts:
+                    base_symbol = chart.get('baseToken', {}).get('symbol', '').upper()
+                    if base_symbol in current_tokens:
+                        found_current_tokens.append(base_symbol)
+                
+                if found_current_tokens:
+                    self.log_test("Current tokens", True, f"Found {len(set(found_current_tokens))} current trending tokens: {list(set(found_current_tokens))[:5]}")
+                else:
+                    self.log_test("Current tokens", False, "No current trending tokens found in results")
+                
+                # Check for USDT/USDC pairs preference
+                usdt_usdc_pairs = []
+                for chart in charts:
+                    quote_symbol = chart.get('quoteToken', {}).get('symbol', '').upper()
+                    if quote_symbol in ['USDT', 'USDC']:
+                        usdt_usdc_pairs.append(quote_symbol)
+                
+                usdt_usdc_percentage = (len(usdt_usdc_pairs) / len(charts)) * 100
+                self.log_test("USDT/USDC pairs", True, f"{len(usdt_usdc_pairs)}/{len(charts)} pairs ({usdt_usdc_percentage:.1f}%) are USDT/USDC")
+                
+                # Check for duplicates (should be removed)
+                pair_addresses = [chart.get('pairAddress') for chart in charts if chart.get('pairAddress')]
+                unique_addresses = set(pair_addresses)
+                if len(pair_addresses) == len(unique_addresses):
+                    self.log_test("Duplicate removal", True, "No duplicate pair addresses found")
+                else:
+                    duplicates = len(pair_addresses) - len(unique_addresses)
+                    self.log_test("Duplicate removal", False, f"Found {duplicates} duplicate pair addresses")
+                
+                # Check volume sorting (should be sorted by 24h volume, highest first)
+                volumes = []
+                for chart in charts:
+                    volume_24h = chart.get('volume', {}).get('h24', 0)
+                    if volume_24h is not None:
+                        try:
+                            volumes.append(float(volume_24h))
+                        except (ValueError, TypeError):
+                            volumes.append(0)
+                
+                is_sorted = all(volumes[i] >= volumes[i+1] for i in range(len(volumes)-1))
+                if is_sorted:
+                    self.log_test("Volume sorting", True, f"Charts properly sorted by volume (${volumes[0]:,.0f} to ${volumes[-1]:,.0f})")
+                else:
+                    self.log_test("Volume sorting", False, "Charts not properly sorted by 24h volume")
+                
+                # Check total count (should get close to 32 pairs)
+                if len(charts) >= 25:  # Allow some flexibility
+                    self.log_test("Chart count", True, f"Good chart count: {len(charts)} (target: ~32)")
+                else:
+                    self.log_test("Chart count", False, f"Low chart count: {len(charts)} (target: ~32)")
                 
                 # Store first few charts for choice recording tests
                 self.test_charts = charts[:5] if len(charts) >= 5 else charts
