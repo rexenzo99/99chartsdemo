@@ -114,6 +114,7 @@ function App() {
     setChoices([]);
     setShowResults(false);
     setSessionResults(null);
+    setUsingCustomTickers(false); // Reset custom ticker flag
     setCurrentScreen('ticker-selection');
   };
 
