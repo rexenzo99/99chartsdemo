@@ -263,8 +263,7 @@ function App() {
           eliminatedCharts[eliminatedCharts.length - 1] // 3rd place (last eliminated)
         ]);
         setShowConfetti(true); // Trigger confetti animation
-        setShowResults(true); // Directly show results for tournament
-        setCurrentScreen('results'); // Ensure we switch to results screen
+        setCurrentScreen('results'); // Switch to results screen
       } else {
         // Losers bracket champion wins
         const winnersChamp = winnersbracket[0];
@@ -285,8 +284,7 @@ function App() {
             eliminatedCharts[eliminatedCharts.length - 1] // 3rd place (last eliminated)
           ]);
           setShowConfetti(true); // Trigger confetti animation
-          setShowResults(true); // Directly show results for tournament
-          setCurrentScreen('results'); // Ensure we switch to results screen
+          setCurrentScreen('results'); // Switch to results screen
         }
       }
     }
