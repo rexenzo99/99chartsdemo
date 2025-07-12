@@ -724,6 +724,115 @@ function App() {
 
   // Results Screen (Step 4)
   if (showResults && (sessionResults || finalRankings.length > 0)) {
+    const getChartUrl = (chart) => {
+      const intervalMap = {
+        '15m': '15',
+        '30m': '30', 
+        '1h': '60',
+        '4h': '240',
+        '1d': 'D',
+        '1w': 'W'
+      };
+      
+      const dexInterval = intervalMap[selectedInterval] || '60';
+      
+      if (chart.isCustom && !chart.isMock) {
+        return `https://dexscreener.com/${chart.chainId}/${chart.pairAddress}?embed=1&theme=dark&trades=0&info=0&hidegrid=1&hidevolume=1&hidestatus=1&hidelegend=1&hide_top_toolbar=1&hide_side_toolbar=1&intervals_disabled=1&withdateranges=0&details=0&hotlist=0&calendar=0&tab=chart&interval=${dexInterval}`;
+      } else {
+        return `https://dexscreener.com/${chart.chainId}/${chart.pairAddress}?embed=1&theme=dark&trades=0&info=0&hidegrid=1&hidevolume=1&hidestatus=1&hidelegend=1&hide_top_toolbar=1&hide_side_toolbar=1&intervals_disabled=1&withdateranges=0&details=0&hotlist=0&calendar=0&tab=chart&interval=${dexInterval}`;
+      }
+    };
+
+    // If we have tournament results, show tournament-style results
+    if (finalRankings.length > 0) {
+      const winnerChart = finalRankings[0];
+      
+      return (
+        <div className="min-h-screen bg-gray-900 p-6">
+          <div className="max-w-7xl mx-auto">
+            {/* Wide-screen results header */}
+            <div className="text-center mb-8">
+              <h1 className="text-4xl font-bold text-white mb-4">🏆 Your Favorite Chart!</h1>
+            </div>
+
+            {/* Winner chart display - wide format */}
+            <div className="mb-8">
+              <div className="w-full h-96 border-4 border-yellow-500 rounded-lg overflow-hidden bg-gray-800 shadow-2xl">
+                <iframe
+                  key={`winner-${winnerChart?.pairAddress}-${selectedInterval}`}
+                  src={getChartUrl(winnerChart)}
+                  className="w-full h-full"
+                  title="Tournament Winner Chart"
+                  frameBorder="0"
+                />
+              </div>
+            </div>
+
+            {/* Tournament results table */}
+            <div className="bg-gray-800 rounded-lg border border-gray-600 overflow-hidden mb-8">
+              <table className="w-full">
+                <thead className="bg-gray-700">
+                  <tr>
+                    <th className="px-6 py-4 text-left text-white font-bold">Rank</th>
+                    <th className="px-6 py-4 text-left text-white font-bold">Symbol</th>
+                    <th className="px-6 py-4 text-center text-white font-bold">Score</th>
+                    <th className="px-6 py-4 text-center text-white font-bold">Win</th>
+                    <th className="px-6 py-4 text-center text-white font-bold">Lose</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {finalRankings.map((chart, index) => {
+                    const symbol = chart.baseToken?.symbol || 'UNKNOWN';
+                    const wins = Math.floor(Math.random() * 5) + index === 0 ? 4 : index === 1 ? 3 : 2; // Mock wins for now
+                    const losses = chart.losses || 0;
+                    const score = wins - (losses * 0.5); // Calculate score
+                    
+                    return (
+                      <tr key={index} className={`border-t border-gray-600 ${index === 0 ? 'bg-yellow-900/20' : index === 1 ? 'bg-gray-700/30' : 'bg-orange-900/20'}`}>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center space-x-2">
+                            <span className="text-2xl">
+                              {index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉'}
+                            </span>
+                            <span className="text-white font-bold">
+                              {index === 0 ? '1st' : index === 1 ? '2nd' : '3rd'}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 text-white font-bold text-lg">
+                          {symbol}USDT
+                        </td>
+                        <td className="px-6 py-4 text-center text-white font-bold text-lg">
+                          {score.toFixed(1)}
+                        </td>
+                        <td className="px-6 py-4 text-center text-green-400 font-bold text-lg">
+                          {wins}
+                        </td>
+                        <td className="px-6 py-4 text-center text-red-400 font-bold text-lg">
+                          {losses}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Start Over button */}
+            <div className="text-center">
+              <button
+                onClick={resetSession}
+                className="px-12 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold text-xl transition-colors border-2 border-blue-500 shadow-lg"
+              >
+                Start Over
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // Original hot_or_not results (fallback)
     return (
       <div className="min-h-screen bg-gray-900 p-6">
         <div className="max-w-4xl mx-auto">
