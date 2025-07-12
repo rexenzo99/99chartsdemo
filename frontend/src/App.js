@@ -83,10 +83,10 @@ function App() {
   const getCurrentChartUrl = () => {
     if (!charts[currentIndex]) return '';
     const chart = charts[currentIndex];
-    const symbol = chart.symbol; // e.g., "BINANCE:BTCUSDT"
+    const symbol = chart.symbol.replace('BINANCE:', ''); // Remove exchange prefix for testing
     
-    // Very basic TradingView widget - testing if anything loads
-    return `https://www.tradingview.com/widgetembed/?symbol=${symbol}&interval=D&theme=dark&style=1&locale=en&toolbar_bg=%23f1f3f6&enable_publishing=false&allow_symbol_change=false&hideideas=true`;
+    // Alternative: Try TradingView's basic chart URL
+    return `https://www.tradingview.com/chart/?symbol=${symbol}&interval=1D&theme=dark`;
   };
 
   const resetSession = () => {
