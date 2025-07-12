@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || window.location.origin;
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 function App() {
   const [charts, setCharts] = useState([]);
