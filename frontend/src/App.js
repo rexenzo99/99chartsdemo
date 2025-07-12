@@ -191,15 +191,13 @@ function App() {
       <div className="w-full max-w-4xl">
         {/* Chart iframe - Square aspect ratio */}
         <div className="mb-8">
-          <div className="w-full aspect-square border rounded-lg overflow-hidden bg-gray-800 border-gray-700 relative">
+          <div className="w-full aspect-square border rounded-lg overflow-hidden bg-gray-800 border-gray-700">
             <iframe
               src={getCurrentChartUrl()}
-              className="w-full h-full scale-110 -translate-y-8"
+              className="w-full h-full"
               title={`Chart for ${charts[currentIndex]?.baseToken?.symbol || 'Unknown'}`}
               frameBorder="0"
             />
-            {/* Overlay to hide bottom tabs */}
-            <div className="absolute bottom-0 left-0 right-0 h-16 bg-gray-800"></div>
           </div>
         </div>
 
