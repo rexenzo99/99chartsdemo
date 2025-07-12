@@ -50,6 +50,30 @@ backend:
         agent: "testing"
         comment: "✅ Session results retrieval working perfectly. Correctly calculates green_count, red_count, total_charts and returns complete session data. Properly handles invalid session IDs with 404 responses."
 
+  - task: "POST /api/store-trending-metadata endpoint"
+    implemented: true
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ NEW ENDPOINT WORKING PERFECTLY: Store trending metadata endpoint successfully stores charts data with session_id. Validates required fields (session_id and charts), returns proper success response with chart count, handles invalid data with 400 status code. In-memory cache working correctly for temporary storage."
+
+  - task: "GET /api/get-trending-metadata/{session_id} endpoint"
+    implemented: true
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ NEW ENDPOINT WORKING PERFECTLY: Retrieve trending metadata endpoint successfully returns stored charts data by session_id. Proper 404 handling for missing sessions, correct response structure with success flag and charts array. Data integrity verified - stored and retrieved data match exactly."
+
   - task: "MongoDB data persistence"
     implemented: true
     working: true
