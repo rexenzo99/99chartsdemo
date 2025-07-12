@@ -14,14 +14,15 @@ function App() {
   const [sessionResults, setSessionResults] = useState(null);
   const [currentScreen, setCurrentScreen] = useState('ticker-selection'); // New state for screen management
   const [tickers, setTickers] = useState(Array(32).fill('')); // 32 empty ticker slots
+  const [usingCustomTickers, setUsingCustomTickers] = useState(false); // Track if we're using custom tickers
 
   useEffect(() => {
-    if (currentScreen === 'hot-or-not') {
+    if (currentScreen === 'hot-or-not' && !usingCustomTickers) {
       initializeSession();
     } else {
       setLoading(false);
     }
-  }, [currentScreen]);
+  }, [currentScreen, usingCustomTickers]);
 
   const initializeSession = async () => {
     try {
