@@ -130,7 +130,10 @@ function App() {
           'USDSUSDT',
           'WBTUSDT',
           'BSC-USDUSDT',
-          'CBBTCUSDT'
+          'CBBTCUSDT',
+          'USDEUSDT',
+          'BGBUSDT',
+          'SUSDEUSDT'
         ];
         
         const newTickers = [];
