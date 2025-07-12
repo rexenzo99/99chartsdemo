@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+import requests
 import os
 from typing import List, Optional
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -45,46 +46,37 @@ async def root():
 
 @app.get("/api/trending-charts")
 async def get_trending_charts():
-    """Get hardcoded trading pairs for TradingView"""
+    """Fetch your 3 specific trading pairs from Dexscreener"""
     try:
-        # Hardcoded trading pairs - will expand this later
-        trading_pairs = [
-            {
-                "symbol": "BINANCE:BTCUSDT",
-                "baseToken": {
-                    "symbol": "BTC",
-                    "name": "Bitcoin"
-                },
-                "priceUsd": "43250.50",
-                "priceChange": {"h24": 2.45}
-            },
-            {
-                "symbol": "BINANCE:ETHUSDT", 
-                "baseToken": {
-                    "symbol": "ETH",
-                    "name": "Ethereum"
-                },
-                "priceUsd": "2580.75",
-                "priceChange": {"h24": -1.23}
-            },
-            {
-                "symbol": "BINANCE:SOLUSDT",
-                "baseToken": {
-                    "symbol": "SOL", 
-                    "name": "Solana"
-                },
-                "priceUsd": "102.45",
-                "priceChange": {"h24": 5.67}
-            }
-        ]
+        all_pairs = []
+        
+        # Your specific tokens
+        search_tokens = ["BTC", "ETH", "SOL"]
+        
+        for token in search_tokens:
+            try:
+                url = f"https://api.dexscreener.com/latest/dex/search?q={token}"
+                response = requests.get(url, timeout=10)
+                response.raise_for_status()
+                
+                data = response.json()
+                pairs = data.get('pairs', [])
+                
+                if pairs:
+                    # Take just the first best pair for each token
+                    all_pairs.append(pairs[0])
+                    
+            except Exception as search_error:
+                print(f"Failed to search for {token}: {search_error}")
+                continue
         
         return {
             "success": True,
-            "charts": trading_pairs,
-            "total": len(trading_pairs)
+            "charts": all_pairs,
+            "total": len(all_pairs)
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to get trading pairs: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to fetch trending charts: {str(e)}")
 
 @app.post("/api/record-choice")
 async def record_choice(choice_data: ChartChoice):
