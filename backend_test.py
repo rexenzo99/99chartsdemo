@@ -399,6 +399,163 @@ class ChartsDemoAPITester:
             self.log_test("Data persistence", False, f"Exception: {str(e)}")
             return False
     
+    def test_store_trending_metadata(self):
+        """Test POST /api/store-trending-metadata endpoint"""
+        if not self.session_id:
+            self.log_test("Store trending metadata", False, "No session ID available")
+            return False
+        
+        if not hasattr(self, 'test_charts') or not self.test_charts:
+            self.log_test("Store trending metadata", False, "No chart data available")
+            return False
+        
+        try:
+            # Test storing metadata with valid session_id and charts data
+            metadata_payload = {
+                "session_id": self.session_id,
+                "charts": self.test_charts[:3]  # Store first 3 charts
+            }
+            
+            response = requests.post(
+                f"{self.base_url}/api/store-trending-metadata",
+                json=metadata_payload,
+                headers={"Content-Type": "application/json"}
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if data.get("success") and "message" in data:
+                    self.log_test("Store trending metadata", True, f"Stored metadata: {data['message']}")
+                    return True
+                else:
+                    self.log_test("Store trending metadata", False, f"Unexpected response: {data}")
+                    return False
+            else:
+                self.log_test("Store trending metadata", False, f"Status code: {response.status_code}")
+                return False
+        except Exception as e:
+            self.log_test("Store trending metadata", False, f"Exception: {str(e)}")
+            return False
+    
+    def test_store_trending_metadata_invalid(self):
+        """Test POST /api/store-trending-metadata with invalid data"""
+        try:
+            # Test with missing session_id
+            invalid_payload = {
+                "charts": [{"test": "data"}]
+            }
+            
+            response = requests.post(
+                f"{self.base_url}/api/store-trending-metadata",
+                json=invalid_payload,
+                headers={"Content-Type": "application/json"}
+            )
+            
+            if response.status_code == 400:
+                self.log_test("Store metadata invalid data", True, "Correctly rejected missing session_id")
+                return True
+            else:
+                self.log_test("Store metadata invalid data", False, f"Expected 400, got {response.status_code}")
+                return False
+        except Exception as e:
+            self.log_test("Store metadata invalid data", False, f"Exception: {str(e)}")
+            return False
+    
+    def test_get_trending_metadata(self):
+        """Test GET /api/get-trending-metadata/{session_id} endpoint"""
+        if not self.session_id:
+            self.log_test("Get trending metadata", False, "No session ID available")
+            return False
+        
+        try:
+            response = requests.get(f"{self.base_url}/api/get-trending-metadata/{self.session_id}")
+            
+            if response.status_code == 200:
+                data = response.json()
+                
+                # Check response structure
+                if not data.get("success"):
+                    self.log_test("Get trending metadata", False, "Success flag not true")
+                    return False
+                
+                if "charts" not in data:
+                    self.log_test("Get trending metadata", False, "Missing charts in response")
+                    return False
+                
+                charts = data["charts"]
+                if not isinstance(charts, list):
+                    self.log_test("Get trending metadata", False, "Charts is not a list")
+                    return False
+                
+                # Verify data integrity - should match what we stored
+                if len(charts) == 3:  # We stored 3 charts
+                    self.log_test("Get trending metadata", True, f"Retrieved {len(charts)} charts successfully")
+                    
+                    # Store retrieved data for comparison test
+                    self.retrieved_metadata = charts
+                    return True
+                else:
+                    self.log_test("Get trending metadata", False, f"Expected 3 charts, got {len(charts)}")
+                    return False
+            else:
+                self.log_test("Get trending metadata", False, f"Status code: {response.status_code}")
+                return False
+        except Exception as e:
+            self.log_test("Get trending metadata", False, f"Exception: {str(e)}")
+            return False
+    
+    def test_get_trending_metadata_missing_session(self):
+        """Test GET /api/get-trending-metadata/{session_id} with missing session"""
+        try:
+            fake_session_id = str(uuid.uuid4())
+            response = requests.get(f"{self.base_url}/api/get-trending-metadata/{fake_session_id}")
+            
+            if response.status_code == 404:
+                self.log_test("Get metadata missing session", True, "Correctly returned 404 for missing session")
+                return True
+            else:
+                self.log_test("Get metadata missing session", False, f"Expected 404, got {response.status_code}")
+                return False
+        except Exception as e:
+            self.log_test("Get metadata missing session", False, f"Exception: {str(e)}")
+            return False
+    
+    def test_metadata_data_integrity(self):
+        """Test data integrity between stored and retrieved metadata"""
+        if not hasattr(self, 'test_charts') or not hasattr(self, 'retrieved_metadata'):
+            self.log_test("Metadata data integrity", False, "Missing test data for comparison")
+            return False
+        
+        try:
+            stored_charts = self.test_charts[:3]  # We stored first 3 charts
+            retrieved_charts = self.retrieved_metadata
+            
+            if len(stored_charts) != len(retrieved_charts):
+                self.log_test("Metadata data integrity", False, f"Length mismatch: {len(stored_charts)} vs {len(retrieved_charts)}")
+                return False
+            
+            # Compare key fields of first chart
+            if stored_charts and retrieved_charts:
+                stored_first = stored_charts[0]
+                retrieved_first = retrieved_charts[0]
+                
+                # Check if pair addresses match (key identifier)
+                stored_addr = stored_first.get('pairAddress')
+                retrieved_addr = retrieved_first.get('pairAddress')
+                
+                if stored_addr == retrieved_addr:
+                    self.log_test("Metadata data integrity", True, "Stored and retrieved data match")
+                    return True
+                else:
+                    self.log_test("Metadata data integrity", False, f"Pair address mismatch: {stored_addr} vs {retrieved_addr}")
+                    return False
+            else:
+                self.log_test("Metadata data integrity", False, "Empty chart data")
+                return False
+        except Exception as e:
+            self.log_test("Metadata data integrity", False, f"Exception: {str(e)}")
+            return False
+    
     def run_all_tests(self):
         """Run all backend API tests"""
         print("🚀 Starting Charts Demo Backend API Tests")
