@@ -190,21 +190,15 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
       <div className="w-full max-w-4xl">
-        {/* Chart iframe - Square aspect ratio with CSS masking */}
+        {/* Chart iframe - Square aspect ratio */}
         <div className="mb-8">
-          <div className="w-full aspect-square border rounded-lg overflow-hidden bg-gray-800 border-gray-700 relative">
+          <div className="w-full aspect-square border rounded-lg overflow-hidden bg-gray-800 border-gray-700">
             <iframe
               src={getCurrentChartUrl()}
               className="w-full h-full"
               title={`Chart for ${charts[currentIndex]?.baseToken?.symbol || 'Unknown'}`}
               frameBorder="0"
             />
-            {/* CSS overlay to hide volume bars at bottom */}
-            <div className="absolute bottom-0 left-0 right-0 h-24 bg-gray-800 pointer-events-none"></div>
-            {/* CSS overlay to hide left toolbar */}
-            <div className="absolute top-0 left-0 w-12 bottom-0 bg-gray-800 pointer-events-none"></div>
-            {/* CSS overlay to hide top toolbar */}
-            <div className="absolute top-0 left-0 right-0 h-12 bg-gray-800 pointer-events-none"></div>
           </div>
         </div>
 
