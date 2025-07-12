@@ -11,7 +11,7 @@ from datetime import datetime
 import uuid
 
 # Backend URL from environment
-BACKEND_URL = "http://localhost:8001"
+BACKEND_URL = "https://de83393e-7b9d-4ad3-abb7-6033b158bf20.preview.emergentagent.com"
 
 class ChartsDemoAPITester:
     def __init__(self):
