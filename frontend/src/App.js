@@ -303,12 +303,12 @@ function App() {
     
     const dexInterval = intervalMap[selectedInterval] || '60'; // Default to 1h
     
-    // Check if this is a custom ticker with real pair data
-    if (pair.isCustom && !pair.isMock) {
+    // Check if this is cached trending data
+    if (pair.isCached || (pair.isCustom && !pair.isMock && pair.pairAddress && pair.chainId)) {
       // Use real Dexscreener pair data with selected interval
       const chainId = pair.chainId;
       const pairAddress = pair.pairAddress;
-      console.log(`Loading real chart: ${chainId}/${pairAddress} with interval ${selectedInterval}`);
+      console.log(`Loading cached/real chart: ${chainId}/${pairAddress} with interval ${selectedInterval}`);
       return `https://dexscreener.com/${chainId}/${pairAddress}?embed=1&theme=dark&trades=0&info=0&hidegrid=1&hidevolume=1&hidestatus=1&hidelegend=1&hide_top_toolbar=1&hide_side_toolbar=1&intervals_disabled=1&withdateranges=0&details=0&hotlist=0&calendar=0&tab=chart&interval=${dexInterval}`;
     } else if (pair.isCustom && pair.isMock) {
       // Fallback for tokens with no pairs found
