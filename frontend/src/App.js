@@ -69,13 +69,6 @@ function App() {
       // Move to next chart or show results
       if (currentIndex < charts.length - 1) {
         setCurrentIndex(currentIndex + 1);
-        // Force iframe reload with correct interval for next chart
-        setTimeout(() => {
-          const iframe = document.querySelector('iframe');
-          if (iframe) {
-            iframe.src = iframe.src; // Force reload with current interval
-          }
-        }, 100);
       } else {
         // All charts completed, show results
         showSessionResults();
