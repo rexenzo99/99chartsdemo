@@ -222,7 +222,7 @@ function App() {
     setTickers(Array(32).fill(''));
   };
 
-  const startHotOrNot = () => {
+  const startHotOrNot = async () => {
     // Filter out empty tickers and randomize
     const filledTickers = tickers.filter(ticker => ticker.trim() !== '');
     
@@ -231,33 +231,85 @@ function App() {
       return;
     }
     
+    setLoading(true);
+    
     // Randomize the tickers
     const randomizedTickers = [...filledTickers].sort(() => Math.random() - 0.5);
     
     console.log('Custom tickers being used:', randomizedTickers); // Debug log
     
-    // Convert tickers to chart format expected by hot_or_not screen
-    const customCharts = randomizedTickers.map((ticker, index) => {
-      // Extract base symbol (remove USDT suffix)
-      const baseSymbol = ticker.replace('USDT', '');
-      
-      return {
-        chainId: 'custom', // Mark as custom to distinguish from API data
-        pairAddress: `custom_${ticker}_${index}_${Date.now()}`, // Unique identifier
-        baseToken: {
-          symbol: baseSymbol,
-          name: `${baseSymbol} Token`
-        },
-        priceUsd: (Math.random() * 100).toFixed(6), // Mock price
-        priceChange: {
-          h24: ((Math.random() - 0.5) * 20).toFixed(2) // Mock 24h change
-        },
-        volume: {
-          h24: (Math.random() * 1000000).toFixed(0) // Mock volume
-        },
-        originalTicker: ticker // Keep original ticker for URL generation
-      };
-    });
+    // Fetch actual pair data for each ticker from Dexscreener
+    const customCharts = [];
+    
+    for (const ticker of randomizedTickers) {
+      try {
+        const baseSymbol = ticker.replace('USDT', '');
+        console.log(`Searching for pairs for ${baseSymbol}...`);
+        
+        // Use Dexscreener search API to find actual pairs
+        const response = await fetch(`https://api.dexscreener.com/latest/dex/search?q=${baseSymbol}`);
+        const data = await response.json();
+        
+        if (data.pairs && data.pairs.length > 0) {
+          // Find the best pair (highest volume)
+          const bestPair = data.pairs.sort((a, b) => {
+            const volumeA = parseFloat(a.volume?.h24 || 0);
+            const volumeB = parseFloat(b.volume?.h24 || 0);
+            return volumeB - volumeA;
+          })[0];
+          
+          customCharts.push({
+            ...bestPair,
+            originalTicker: ticker,
+            isCustom: true
+          });
+        } else {
+          // Fallback: create mock data if no pairs found
+          customCharts.push({
+            chainId: 'ethereum',
+            pairAddress: `mock_${ticker}_${Date.now()}`,
+            baseToken: {
+              symbol: baseSymbol,
+              name: `${baseSymbol} Token`
+            },
+            priceUsd: (Math.random() * 100).toFixed(6),
+            priceChange: {
+              h24: ((Math.random() - 0.5) * 20).toFixed(2)
+            },
+            volume: {
+              h24: (Math.random() * 1000000).toFixed(0)
+            },
+            originalTicker: ticker,
+            isCustom: true,
+            isMock: true
+          });
+        }
+      } catch (error) {
+        console.error(`Failed to fetch data for ${ticker}:`, error);
+        // Add mock data as fallback
+        const baseSymbol = ticker.replace('USDT', '');
+        customCharts.push({
+          chainId: 'ethereum',
+          pairAddress: `mock_${ticker}_${Date.now()}`,
+          baseToken: {
+            symbol: baseSymbol,
+            name: `${baseSymbol} Token`
+          },
+          priceUsd: (Math.random() * 100).toFixed(6),
+          priceChange: {
+            h24: ((Math.random() - 0.5) * 20).toFixed(2)
+          },
+          volume: {
+            h24: (Math.random() * 1000000).toFixed(0)
+          },
+          originalTicker: ticker,
+          isCustom: true,
+          isMock: true
+        });
+      }
+    }
+    
+    console.log('Final charts data:', customCharts);
     
     // Set flags and data for custom ticker analysis
     setUsingCustomTickers(true);
