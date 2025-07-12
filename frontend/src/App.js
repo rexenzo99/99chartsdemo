@@ -109,6 +109,56 @@ function App() {
     setTickers(newTickers);
   };
 
+  const loadTopMarketCap = async () => {
+    try {
+      setLoading(true);
+      // Using CoinGecko API for top market cap tokens
+      const response = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=32&page=1&sparkline=false');
+      const data = await response.json();
+      
+      if (data && data.length > 0) {
+        const newTickers = [...tickers];
+        data.forEach((coin, index) => {
+          if (index < 32) {
+            // Convert coin symbol to ticker format (e.g., BTC -> BTCUSDT)
+            newTickers[index] = `${coin.symbol.toUpperCase()}USDT`;
+          }
+        });
+        setTickers(newTickers);
+      }
+      setLoading(false);
+    } catch (error) {
+      console.error('Failed to load top market cap tokens:', error);
+      setLoading(false);
+    }
+  };
+
+  const loadTrendingSearch = async () => {
+    try {
+      setLoading(true);
+      // Use existing backend API for trending tokens
+      const response = await axios.get(`${BACKEND_URL}/api/trending-charts`);
+      if (response.data.success && response.data.charts) {
+        const newTickers = [...tickers];
+        response.data.charts.forEach((chart, index) => {
+          if (index < 32 && chart.baseToken?.symbol) {
+            // Use the symbol from dexscreener data
+            newTickers[index] = `${chart.baseToken.symbol.toUpperCase()}USDT`;
+          }
+        });
+        setTickers(newTickers);
+      }
+      setLoading(false);
+    } catch (error) {
+      console.error('Failed to load trending search tokens:', error);
+      setLoading(false);
+    }
+  };
+
+  const clearAllTickers = () => {
+    setTickers(Array(32).fill(''));
+  };
+
   const startHotOrNot = () => {
     setCurrentScreen('hot-or-not');
     setLoading(true);
