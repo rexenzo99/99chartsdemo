@@ -515,6 +515,129 @@ function App() {
     );
   }
 
+  // Tournament Screen (Step 3)
+  if (currentScreen === 'tournament') {
+    const getChartUrl = (chart) => {
+      const intervalMap = {
+        '15m': '15',
+        '30m': '30', 
+        '1h': '60',
+        '4h': '240',
+        '1d': 'D',
+        '1w': 'W'
+      };
+      
+      const dexInterval = intervalMap[selectedInterval] || '60';
+      
+      if (chart.isCustom && !chart.isMock) {
+        return `https://dexscreener.com/${chart.chainId}/${chart.pairAddress}?embed=1&theme=dark&trades=0&info=0&hidegrid=1&hidevolume=1&hidestatus=1&hidelegend=1&hide_top_toolbar=1&hide_side_toolbar=1&intervals_disabled=1&withdateranges=0&details=0&hotlist=0&calendar=0&tab=chart&interval=${dexInterval}`;
+      } else {
+        return `https://dexscreener.com/${chart.chainId}/${chart.pairAddress}?embed=1&theme=dark&trades=0&info=0&hidegrid=1&hidevolume=1&hidestatus=1&hidelegend=1&hide_top_toolbar=1&hide_side_toolbar=1&intervals_disabled=1&withdateranges=0&details=0&hotlist=0&calendar=0&tab=chart&interval=${dexInterval}`;
+      }
+    };
+
+    return (
+      <div className="min-h-screen bg-gray-900 p-6">
+        <div className="max-w-7xl mx-auto">
+          {/* Tournament Header */}
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-white mb-4">🏆 Tournament Mode</h1>
+            <p className="text-gray-300 text-lg">
+              Choose the better chart - Head to Head
+            </p>
+            <div className="mt-4 text-sm text-gray-400">
+              Remaining charts: {tournamentCharts.length} | Winners: {tournamentWinners.length}
+            </div>
+          </div>
+
+          {/* Side by Side Charts */}
+          <div className="grid grid-cols-2 gap-8 mb-8">
+            {/* Left Chart */}
+            <div className="space-y-4">
+              <div className="text-center">
+                <h3 className="text-xl font-bold text-white mb-2">
+                  {currentMatchup.left?.baseToken?.symbol || 'Chart A'}
+                </h3>
+                <p className="text-gray-400">
+                  {currentMatchup.left?.baseToken?.name || 'Token A'}
+                </p>
+              </div>
+              <div 
+                className="w-full aspect-square border-4 rounded-lg overflow-hidden bg-gray-800 cursor-pointer transition-all duration-300 hover:border-blue-500 border-gray-600"
+                onClick={() => selectTournamentWinner(currentMatchup.left)}
+              >
+                <iframe
+                  key={`tournament-left-${currentMatchup.left?.pairAddress}-${selectedInterval}`}
+                  src={getChartUrl(currentMatchup.left)}
+                  className="w-full h-full"
+                  title={`Chart for ${currentMatchup.left?.baseToken?.symbol || 'Chart A'}`}
+                  frameBorder="0"
+                />
+              </div>
+              <div className="text-center">
+                <button
+                  onClick={() => selectTournamentWinner(currentMatchup.left)}
+                  className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold text-lg transition-colors border-2 border-blue-500 shadow-lg"
+                >
+                  Choose This Chart
+                </button>
+              </div>
+            </div>
+
+            {/* VS Divider */}
+            <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
+              <div className="bg-gray-800 border-4 border-gray-600 rounded-full w-16 h-16 flex items-center justify-center">
+                <span className="text-white font-bold text-lg">VS</span>
+              </div>
+            </div>
+
+            {/* Right Chart */}
+            <div className="space-y-4">
+              <div className="text-center">
+                <h3 className="text-xl font-bold text-white mb-2">
+                  {currentMatchup.right?.baseToken?.symbol || 'Chart B'}
+                </h3>
+                <p className="text-gray-400">
+                  {currentMatchup.right?.baseToken?.name || 'Token B'}
+                </p>
+              </div>
+              <div 
+                className="w-full aspect-square border-4 rounded-lg overflow-hidden bg-gray-800 cursor-pointer transition-all duration-300 hover:border-blue-500 border-gray-600"
+                onClick={() => selectTournamentWinner(currentMatchup.right)}
+              >
+                <iframe
+                  key={`tournament-right-${currentMatchup.right?.pairAddress}-${selectedInterval}`}
+                  src={getChartUrl(currentMatchup.right)}
+                  className="w-full h-full"
+                  title={`Chart for ${currentMatchup.right?.baseToken?.symbol || 'Chart B'}`}
+                  frameBorder="0"
+                />
+              </div>
+              <div className="text-center">
+                <button
+                  onClick={() => selectTournamentWinner(currentMatchup.right)}
+                  className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold text-lg transition-colors border-2 border-blue-500 shadow-lg"
+                >
+                  Choose This Chart
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Tournament Progress */}
+          <div className="text-center">
+            <div className="bg-gray-800 rounded-lg p-4 border border-gray-600 inline-block">
+              <span className="text-gray-300">Tournament Progress: </span>
+              <span className="text-blue-400 font-bold">
+                Round {Math.ceil(Math.log2(tournamentCharts.length))} 
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // Loading Screen
   if (loading) {
     return (
