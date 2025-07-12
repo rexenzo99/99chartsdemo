@@ -93,14 +93,14 @@ function App() {
     
     // Check if this is a custom ticker (from ticker selection)
     if (pair.chainId === 'custom' && pair.originalTicker) {
-      // For custom tickers, search for the token on dexscreener using the original ticker
+      // For custom tickers, use direct dexscreener search
       const ticker = pair.originalTicker;
       const baseSymbol = ticker.replace('USDT', '');
       
       console.log(`Loading chart for custom ticker: ${ticker} (${baseSymbol})`); // Debug log
       
-      // Search for this specific token pair on dexscreener
-      return `https://dexscreener.com/search?q=${baseSymbol}?embed=1&theme=dark&trades=0&info=0&hidegrid=1&hidevolume=1&hidestatus=1&hidelegend=1&hide_top_toolbar=1&hide_side_toolbar=1&intervals_disabled=1&withdateranges=0&details=0&hotlist=0&calendar=0&tab=chart`;
+      // Use dexscreener search format that works
+      return `https://dexscreener.com/?q=${baseSymbol}&embed=1&theme=dark&trades=0&info=0`;
     } else {
       // Real dexscreener data with actual chainId and pairAddress  
       const chainId = pair.chainId;
