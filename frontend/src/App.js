@@ -4,6 +4,75 @@ import './App.css';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
+// Simple Confetti Component
+const Confetti = ({ isActive }) => {
+  const [particles, setParticles] = useState([]);
+
+  useEffect(() => {
+    if (isActive) {
+      const newParticles = Array.from({ length: 50 }, (_, i) => ({
+        id: i,
+        x: Math.random() * window.innerWidth,
+        y: -10,
+        color: ['#FFD700', '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7'][Math.floor(Math.random() * 6)],
+        size: Math.random() * 8 + 4,
+        speedX: (Math.random() - 0.5) * 4,
+        speedY: Math.random() * 3 + 2,
+        rotation: Math.random() * 360,
+        rotationSpeed: (Math.random() - 0.5) * 8
+      }));
+      setParticles(newParticles);
+
+      const animateParticles = () => {
+        setParticles(prevParticles => 
+          prevParticles
+            .map(particle => ({
+              ...particle,
+              x: particle.x + particle.speedX,
+              y: particle.y + particle.speedY,
+              rotation: particle.rotation + particle.rotationSpeed,
+              speedY: particle.speedY + 0.1 // gravity
+            }))
+            .filter(particle => particle.y < window.innerHeight + 20)
+        );
+      };
+
+      const interval = setInterval(animateParticles, 16);
+      const timeout = setTimeout(() => {
+        clearInterval(interval);
+        setParticles([]);
+      }, 5000);
+
+      return () => {
+        clearInterval(interval);
+        clearTimeout(timeout);
+      };
+    }
+  }, [isActive]);
+
+  if (!isActive || particles.length === 0) return null;
+
+  return (
+    <div className="fixed inset-0 pointer-events-none z-50">
+      {particles.map(particle => (
+        <div
+          key={particle.id}
+          className="absolute rounded-full"
+          style={{
+            left: particle.x,
+            top: particle.y,
+            width: particle.size,
+            height: particle.size,
+            backgroundColor: particle.color,
+            transform: `rotate(${particle.rotation}deg)`,
+            transition: 'none'
+          }}
+        />
+      ))}
+    </div>
+  );
+};
+
 function App() {
   const [charts, setCharts] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
