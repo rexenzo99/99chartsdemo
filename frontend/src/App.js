@@ -176,6 +176,44 @@ function App() {
             </p>
           </div>
 
+          {/* Auto-populate buttons */}
+          <div className="flex justify-center space-x-4 mb-6">
+            <button
+              onClick={loadTopMarketCap}
+              disabled={loading}
+              className="px-6 py-3 bg-red-600 hover:bg-red-700 disabled:bg-gray-600 text-white rounded-lg font-medium transition-colors border border-red-500 flex items-center space-x-2"
+            >
+              <span>📊</span>
+              <span>Top Market Cap</span>
+            </button>
+            <button
+              onClick={loadTrendingSearch}
+              disabled={loading}
+              className="px-6 py-3 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 text-white rounded-lg font-medium transition-colors border border-green-500 flex items-center space-x-2"
+            >
+              <span>🔥</span>
+              <span>Trending Search</span>
+            </button>
+            <button
+              onClick={clearAllTickers}
+              disabled={loading}
+              className="px-6 py-3 bg-gray-600 hover:bg-gray-700 disabled:bg-gray-500 text-white rounded-lg font-medium transition-colors border border-gray-500 flex items-center space-x-2"
+            >
+              <span>🗑️</span>
+              <span>Clear</span>
+            </button>
+          </div>
+
+          {/* Loading indicator */}
+          {loading && (
+            <div className="text-center mb-4">
+              <div className="inline-flex items-center space-x-2 text-blue-400">
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-400"></div>
+                <span>Loading tickers...</span>
+              </div>
+            </div>
+          )}
+
           {/* 4x8 Grid of ticker inputs */}
           <div className="grid grid-cols-4 gap-4 mb-8">
             {tickers.map((ticker, index) => (
@@ -186,24 +224,20 @@ function App() {
                 onChange={(e) => handleTickerChange(index, e.target.value)}
                 placeholder={`TICKER${index + 1}`}
                 className="bg-gray-700 border border-gray-600 text-white text-center py-4 px-2 rounded-lg text-lg font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-400"
-                maxLength={12}
+                maxLength={15}
+                disabled={loading}
               />
             ))}
           </div>
 
-          {/* Action buttons */}
-          <div className="flex justify-center space-x-6">
-            <button
-              onClick={() => {/* TODO: Auto-populate function */}}
-              className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors border border-blue-500"
-            >
-              Auto-Populate Trending
-            </button>
+          {/* Start Analysis button */}
+          <div className="flex justify-center">
             <button
               onClick={startHotOrNot}
-              className="px-8 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors border border-green-500"
+              disabled={loading}
+              className="px-12 py-4 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white rounded-lg font-bold text-xl transition-colors border border-blue-500"
             >
-              Start Analysis
+              🚀 Start Analysis
             </button>
           </div>
         </div>
