@@ -1,7 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-import requests
 import os
 from typing import List, Optional
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -46,49 +45,46 @@ async def root():
 
 @app.get("/api/trending-charts")
 async def get_trending_charts():
-    """Fetch top 30 charts from Dexscreener using popular token searches"""
+    """Get hardcoded trading pairs for TradingView"""
     try:
-        all_pairs = []
-        
-        # Popular tokens to search for
-        search_tokens = ["ETH", "BTC", "SOL", "DOGE", "MATIC", "ADA", "LINK", "AVAX", "UNI", "LTC"]
-        
-        for token in search_tokens:
-            try:
-                url = f"https://api.dexscreener.com/latest/dex/search?q={token}"
-                response = requests.get(url, timeout=10)
-                response.raise_for_status()
-                
-                data = response.json()
-                pairs = data.get('pairs', [])
-                
-                if pairs:
-                    # Take top 3 pairs for each token to get variety
-                    all_pairs.extend(pairs[:3])
-                    
-            except Exception as search_error:
-                print(f"Failed to search for {token}: {search_error}")
-                continue
-        
-        # Remove duplicates based on pairAddress
-        seen_addresses = set()
-        unique_pairs = []
-        for pair in all_pairs:
-            if pair.get('pairAddress') not in seen_addresses:
-                seen_addresses.add(pair.get('pairAddress'))
-                unique_pairs.append(pair)
-        
-        # Sort by volume (24h) descending and take top 30
-        unique_pairs.sort(key=lambda x: float(x.get('volume', {}).get('h24', 0) or 0), reverse=True)
-        top_pairs = unique_pairs[:30]
+        # Hardcoded trading pairs - will expand this later
+        trading_pairs = [
+            {
+                "symbol": "BINANCE:BTCUSDT",
+                "baseToken": {
+                    "symbol": "BTC",
+                    "name": "Bitcoin"
+                },
+                "priceUsd": "43250.50",
+                "priceChange": {"h24": 2.45}
+            },
+            {
+                "symbol": "BINANCE:ETHUSDT", 
+                "baseToken": {
+                    "symbol": "ETH",
+                    "name": "Ethereum"
+                },
+                "priceUsd": "2580.75",
+                "priceChange": {"h24": -1.23}
+            },
+            {
+                "symbol": "BINANCE:SOLUSDT",
+                "baseToken": {
+                    "symbol": "SOL", 
+                    "name": "Solana"
+                },
+                "priceUsd": "102.45",
+                "priceChange": {"h24": 5.67}
+            }
+        ]
         
         return {
             "success": True,
-            "charts": top_pairs,
-            "total": len(top_pairs)
+            "charts": trading_pairs,
+            "total": len(trading_pairs)
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to fetch trending charts: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to get trading pairs: {str(e)}")
 
 @app.post("/api/record-choice")
 async def record_choice(choice_data: ChartChoice):
