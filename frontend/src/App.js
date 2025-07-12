@@ -239,12 +239,23 @@ function App() {
         const data = await response.json();
         
         if (data.pairs && data.pairs.length > 0) {
-          // Find the best pair (highest volume)
-          const bestPair = data.pairs.sort((a, b) => {
+          // Filter for USDT and USDC pairs first
+          const usdtPairs = data.pairs.filter(pair => {
+            const quoteSymbol = pair.quoteToken?.symbol?.toLowerCase();
+            return quoteSymbol === 'usdt' || quoteSymbol === 'usdc';
+          });
+          
+          // If we have USDT/USDC pairs, use them; otherwise fall back to all pairs
+          const relevantPairs = usdtPairs.length > 0 ? usdtPairs : data.pairs;
+          
+          // Find the best pair (highest volume) from relevant pairs
+          const bestPair = relevantPairs.sort((a, b) => {
             const volumeA = parseFloat(a.volume?.h24 || 0);
             const volumeB = parseFloat(b.volume?.h24 || 0);
             return volumeB - volumeA;
           })[0];
+          
+          console.log(`Found pair for ${baseSymbol}: ${bestPair.baseToken?.symbol}/${bestPair.quoteToken?.symbol} on ${bestPair.chainId}`);
           
           customCharts.push({
             ...bestPair,
