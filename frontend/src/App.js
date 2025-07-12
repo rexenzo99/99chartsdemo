@@ -6,13 +6,12 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 function App() {
   const [charts, setCharts] = useState([]);
-  const [currentIndex, setCurrentIndex] = useState(-1); // Start at -1 for configuration mode
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [sessionId, setSessionId] = useState(null);
   const [choices, setChoices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showResults, setShowResults] = useState(false);
   const [sessionResults, setSessionResults] = useState(null);
-  const [configurationMode, setConfigurationMode] = useState(true);
 
   useEffect(() => {
     initializeSession();
@@ -61,10 +60,7 @@ function App() {
 
       // Move to next chart or show results
       if (currentIndex < charts.length - 1) {
-        // Add delay before transitioning to let TradingView sync settings
-        setTimeout(() => {
-          setCurrentIndex(currentIndex + 1);
-        }, 500);
+        setCurrentIndex(currentIndex + 1);
       } else {
         // All charts completed, show results
         showSessionResults();
@@ -84,41 +80,20 @@ function App() {
     }
   };
 
-  const getConfigurationChartUrl = () => {
-    // Use the same chart that will be the first trending chart for configuration
-    // This tests if the issue is caused by switching between different token pairs
-    if (charts.length > 0) {
-      const firstChart = charts[0];
-      return `https://dexscreener.com/${firstChart.chainId}/${firstChart.pairAddress}?embed=1&theme=dark&trades=0&info=0&hidegrid=1&hidevolume=1&hidestatus=1&hidelegend=1&hide_top_toolbar=1`;
-    }
-    // Fallback to BTC/USDT if charts not loaded yet
-    return `https://dexscreener.com/bsc/0x61eb789d75a95caa3ff50ed7e47b96c132fec082?embed=1&theme=dark&trades=0&info=0&hidegrid=1&hidevolume=1&hidestatus=1&hidelegend=1&hide_top_toolbar=1`;
-  };
-
   const getCurrentChartUrl = () => {
-    if (configurationMode) {
-      return getConfigurationChartUrl();
-    }
-    
     if (!charts[currentIndex]) return '';
     const pair = charts[currentIndex];
     const chainId = pair.chainId;
     const pairAddress = pair.pairAddress;
-    // Apply your custom settings via URL parameters
-    return `https://dexscreener.com/${chainId}/${pairAddress}?embed=1&theme=dark&trades=0&info=0&hidegrid=1&hidevolume=1&hidestatus=1&hidelegend=1&hide_top_toolbar=1&tab=chart`;
-  };
-
-  const startApp = () => {
-    setConfigurationMode(false);
-    setCurrentIndex(0); // Start with first actual chart
+    // Apply your custom settings: no volume, no grid, no status, clean chart
+    return `https://dexscreener.com/${chainId}/${pairAddress}?embed=1&theme=dark&trades=0&info=0&hidegrid=1&hidevolume=1&hidestatus=1&hidelegend=1&hide_top_toolbar=1&hide_side_toolbar=1&intervals_disabled=1&withdateranges=0&details=0&hotlist=0&calendar=0&tab=chart`;
   };
 
   const resetSession = () => {
-    setCurrentIndex(-1);
+    setCurrentIndex(0);
     setChoices([]);
     setShowResults(false);
     setSessionResults(null);
-    setConfigurationMode(true);
     initializeSession();
   };
 
@@ -215,56 +190,32 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
       <div className="w-full max-w-4xl">
-        {/* Configuration or Chart Title */}
-        {configurationMode && (
-          <div className="text-center mb-6">
-            <h1 className="text-3xl font-bold text-white mb-2">Configure Your Chart Preferences</h1>
-            <p className="text-gray-300 text-lg">
-              Adjust the chart settings using the native TradingView controls above. 
-              Your preferences will apply to all charts in the session.
-            </p>
-          </div>
-        )}
-
         {/* Chart iframe - Square aspect ratio */}
         <div className="mb-8">
           <div className="w-full aspect-square border rounded-lg overflow-hidden bg-gray-800 border-gray-700">
             <iframe
               src={getCurrentChartUrl()}
               className="w-full h-full"
-              title={configurationMode ? "Configuration Chart - BTC/USDT" : `Chart for ${charts[currentIndex]?.baseToken?.symbol || 'Unknown'}`}
+              title={`Chart for ${charts[currentIndex]?.baseToken?.symbol || 'Unknown'}`}
               frameBorder="0"
             />
           </div>
         </div>
 
         {/* Action buttons */}
-        <div className="flex justify-center">
-          {configurationMode ? (
-            // Configuration mode - Show "Start App" button
-            <button
-              onClick={startApp}
-              className="px-12 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold text-xl transition-colors shadow-lg border-2 border-blue-400"
-            >
-              🚀 Start App
-            </button>
-          ) : (
-            // Hot or Not mode - Show voting buttons
-            <div className="space-x-8">
-              <button
-                onClick={() => recordChoice('red')}
-                className="w-20 h-20 bg-red-500 hover:bg-red-600 text-white rounded-full font-bold text-2xl transition-colors shadow-lg border-2 border-red-400"
-              >
-                ❌
-              </button>
-              <button
-                onClick={() => recordChoice('green')}
-                className="w-20 h-20 bg-green-500 hover:bg-green-600 text-white rounded-full font-bold text-2xl transition-colors shadow-lg border-2 border-green-400"
-              >
-                ✅
-              </button>
-            </div>
-          )}
+        <div className="flex justify-center space-x-8">
+          <button
+            onClick={() => recordChoice('red')}
+            className="w-20 h-20 bg-red-500 hover:bg-red-600 text-white rounded-full font-bold text-2xl transition-colors shadow-lg border-2 border-red-400"
+          >
+            ❌
+          </button>
+          <button
+            onClick={() => recordChoice('green')}
+            className="w-20 h-20 bg-green-500 hover:bg-green-600 text-white rounded-full font-bold text-2xl transition-colors shadow-lg border-2 border-green-400"
+          >
+            ✅
+          </button>
         </div>
       </div>
     </div>
