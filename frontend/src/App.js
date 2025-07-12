@@ -561,6 +561,7 @@ function App() {
         <div className="mb-8">
           <div className="w-full aspect-square border rounded-lg overflow-hidden bg-gray-800 border-gray-700">
             <iframe
+              key={`chart-${currentIndex}-${selectedInterval}`}
               src={getCurrentChartUrl()}
               className="w-full h-full"
               title={`Chart for ${charts[currentIndex]?.baseToken?.symbol || 'Unknown'}`}
