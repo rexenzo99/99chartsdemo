@@ -914,7 +914,24 @@ function App() {
 
   // Hot or Not Screen (Chart Analysis)
   return (
-    <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4 relative">
+      {/* Progress bar - top right */}
+      <div className="absolute top-6 right-6 z-10">
+        <div className="bg-gray-800 rounded-lg p-3 border border-gray-600 shadow-lg">
+          <div className="flex items-center space-x-3">
+            <span className="text-gray-300 text-sm font-medium">
+              {currentIndex + 1} / {charts.length}
+            </span>
+            <div className="w-24 h-2 bg-gray-700 rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-blue-500 rounded-full transition-all duration-300 ease-out"
+                style={{ width: `${((currentIndex + 1) / charts.length) * 100}%` }}
+              ></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="w-full max-w-4xl">
         {/* Chart iframe - Square aspect ratio */}
         <div className="mb-8">
