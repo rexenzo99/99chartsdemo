@@ -50,29 +50,29 @@ async def root():
 @app.post("/api/store-trending-metadata")
 async def store_trending_metadata(metadata: dict):
     """Store trending charts metadata temporarily"""
+    session_id = metadata.get('session_id')
+    charts_data = metadata.get('charts', [])
+    
+    if not session_id or not charts_data:
+        raise HTTPException(status_code=400, detail="Missing session_id or charts data")
+    
     try:
-        session_id = metadata.get('session_id')
-        charts_data = metadata.get('charts', [])
-        
-        if session_id and charts_data:
-            trending_metadata_cache[session_id] = charts_data
-            return {"success": True, "message": f"Stored metadata for {len(charts_data)} charts"}
-        else:
-            raise HTTPException(status_code=400, detail="Missing session_id or charts data")
+        trending_metadata_cache[session_id] = charts_data
+        return {"success": True, "message": f"Stored metadata for {len(charts_data)} charts"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to store metadata: {str(e)}")
 
 @app.get("/api/get-trending-metadata/{session_id}")
 async def get_trending_metadata(session_id: str):
     """Retrieve stored trending charts metadata"""
+    if session_id not in trending_metadata_cache:
+        raise HTTPException(status_code=404, detail="No trending metadata found for this session")
+    
     try:
-        if session_id in trending_metadata_cache:
-            return {
-                "success": True,
-                "charts": trending_metadata_cache[session_id]
-            }
-        else:
-            raise HTTPException(status_code=404, detail="No trending metadata found for this session")
+        return {
+            "success": True,
+            "charts": trending_metadata_cache[session_id]
+        }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to get metadata: {str(e)}")
 
