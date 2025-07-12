@@ -838,8 +838,7 @@ function App() {
                   <p className="text-gray-400">Anonymous Chart</p>
                 </div>
                 <div 
-                  className="w-full aspect-square border-4 rounded-lg overflow-hidden bg-gray-800 cursor-pointer transition-all duration-300 hover:border-blue-500 border-gray-600"
-                  onClick={() => selectTournamentWinner(currentMatchup.left)}
+                  className="w-full aspect-square border-4 rounded-lg overflow-hidden bg-gray-800 transition-all duration-300 hover:border-blue-500 border-gray-600"
                 >
                   <iframe
                     key={`tournament-left-${currentMatchup.left?.pairAddress}-${selectedInterval}`}
@@ -851,7 +850,11 @@ function App() {
                 </div>
                 <div className="text-center">
                   <button
-                    onClick={() => selectTournamentWinner(currentMatchup.left)}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      selectTournamentWinner(currentMatchup.left);
+                    }}
                     className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold text-lg transition-colors border-2 border-blue-500 shadow-lg"
                   >
                     Choose Chart A
@@ -866,8 +869,7 @@ function App() {
                   <p className="text-gray-400">Anonymous Chart</p>
                 </div>
                 <div 
-                  className="w-full aspect-square border-4 rounded-lg overflow-hidden bg-gray-800 cursor-pointer transition-all duration-300 hover:border-blue-500 border-gray-600"
-                  onClick={() => selectTournamentWinner(currentMatchup.right)}
+                  className="w-full aspect-square border-4 rounded-lg overflow-hidden bg-gray-800 transition-all duration-300 hover:border-blue-500 border-gray-600"
                 >
                   <iframe
                     key={`tournament-right-${currentMatchup.right?.pairAddress}-${selectedInterval}`}
@@ -879,7 +881,11 @@ function App() {
                 </div>
                 <div className="text-center">
                   <button
-                    onClick={() => selectTournamentWinner(currentMatchup.right)}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      selectTournamentWinner(currentMatchup.right);
+                    }}
                     className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold text-lg transition-colors border-2 border-blue-500 shadow-lg"
                   >
                     Choose Chart B
