@@ -16,6 +16,9 @@ function App() {
   const [tickers, setTickers] = useState(Array(32).fill('')); // 32 empty ticker slots
   const [usingCustomTickers, setUsingCustomTickers] = useState(false); // Track if we're using custom tickers
   const [selectedInterval, setSelectedInterval] = useState('1h'); // Default to 1 hour
+  const [tournamentCharts, setTournamentCharts] = useState([]); // Charts for tournament
+  const [currentMatchup, setCurrentMatchup] = useState({ left: null, right: null }); // Current head-to-head
+  const [tournamentWinners, setTournamentWinners] = useState([]); // Winners from each round
 
   useEffect(() => {
     if (currentScreen === 'hot-or-not' && !usingCustomTickers) {
