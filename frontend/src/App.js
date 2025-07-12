@@ -407,9 +407,11 @@ function App() {
       if (response.data.success && response.data.charts) {
         const newTickers = [...tickers];
         response.data.charts.forEach((chart, index) => {
-          if (index < 32 && chart.baseToken?.symbol) {
-            // Use the symbol from dexscreener data
-            newTickers[index] = `${chart.baseToken.symbol.toUpperCase()}USDT`;
+          if (index < 32 && chart.baseToken?.symbol && chart.quoteToken?.symbol) {
+            // Use actual pair from dexscreener data
+            const baseSymbol = chart.baseToken.symbol.toUpperCase();
+            const quoteSymbol = chart.quoteToken.symbol.toUpperCase();
+            newTickers[index] = `${baseSymbol}${quoteSymbol}`;
           }
         });
         setTickers(newTickers);
