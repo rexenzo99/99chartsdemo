@@ -263,7 +263,8 @@ function App() {
           eliminatedCharts[eliminatedCharts.length - 1] // 3rd place (last eliminated)
         ]);
         setShowConfetti(true); // Trigger confetti animation
-        showSessionResults();
+        setShowResults(true); // Directly show results for tournament
+        setCurrentScreen('results'); // Ensure we switch to results screen
       } else {
         // Losers bracket champion wins - reset winners bracket champion
         const resetWinner = { ...winnersbracket[0], losses: 1 };
