@@ -245,6 +245,7 @@ function App() {
           loser,  // 2nd place  
           eliminatedCharts[eliminatedCharts.length - 1] // 3rd place (last eliminated)
         ]);
+        setShowConfetti(true); // Trigger confetti animation
         showSessionResults();
       } else {
         // Losers bracket champion wins - reset winners bracket champion
