@@ -85,8 +85,8 @@ function App() {
     const chart = charts[currentIndex];
     const symbol = chart.symbol; // e.g., "BINANCE:BTCUSDT"
     
-    // Simplified TradingView embed URL
-    return `https://www.tradingview.com/widgetembed/?frameElementId=tradingview_chart&symbol=${symbol}&interval=1D&hidesidetoolbar=1&hidetoptoolbar=1&symboledit=0&saveimage=0&toolbarbg=000000&studies=%5B%5D&hidevolume=1&theme=dark&style=1&timezone=Etc%2FUTC&withdateranges=0&hideideas=1&calendar=0&hotlist=0&searchesindicators=0&details=0`;
+    // TradingView embed URL without volume
+    return `https://www.tradingview.com/widgetembed/?frameElementId=tradingview_chart&symbol=${symbol}&interval=1D&hidesidetoolbar=1&hidetoptoolbar=1&symboledit=0&saveimage=0&toolbarbg=000000&studies=%5B%5D&theme=dark&style=1&timezone=Etc%2FUTC&withdateranges=0&hideideas=1&calendar=0&hotlist=0&searchesindicators=0&details=0&disabled_features=%5B%22volume_force_overlay%22%2C%22create_volume_indicator_by_default%22%5D`;
   };
 
   const resetSession = () => {
