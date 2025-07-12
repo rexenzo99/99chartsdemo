@@ -93,24 +93,37 @@ function App() {
     const pair = charts[currentIndex];
     
     console.log('Current chart data:', pair); // Debug log
+    console.log('Selected interval:', selectedInterval); // Debug log
+    
+    // Convert interval format for Dexscreener (if needed)
+    const intervalMap = {
+      '15m': '15',
+      '30m': '30', 
+      '1h': '60',
+      '4h': '240',
+      '1d': 'D',
+      '1w': 'W'
+    };
+    
+    const dexInterval = intervalMap[selectedInterval] || '60'; // Default to 1h
     
     // Check if this is a custom ticker with real pair data
     if (pair.isCustom && !pair.isMock) {
-      // Use real Dexscreener pair data
+      // Use real Dexscreener pair data with selected interval
       const chainId = pair.chainId;
       const pairAddress = pair.pairAddress;
-      console.log(`Loading real chart: ${chainId}/${pairAddress}`);
-      return `https://dexscreener.com/${chainId}/${pairAddress}?embed=1&theme=dark&trades=0&info=0&hidegrid=1&hidevolume=1&hidestatus=1&hidelegend=1&hide_top_toolbar=1&hide_side_toolbar=1&intervals_disabled=1&withdateranges=0&details=0&hotlist=0&calendar=0&tab=chart`;
+      console.log(`Loading real chart: ${chainId}/${pairAddress} with interval ${selectedInterval}`);
+      return `https://dexscreener.com/${chainId}/${pairAddress}?embed=1&theme=dark&trades=0&info=0&hidegrid=1&hidevolume=1&hidestatus=1&hidelegend=1&hide_top_toolbar=1&hide_side_toolbar=1&intervals_disabled=1&withdateranges=0&details=0&hotlist=0&calendar=0&tab=chart&interval=${dexInterval}`;
     } else if (pair.isCustom && pair.isMock) {
       // Fallback for tokens with no pairs found
       const baseSymbol = pair.baseToken?.symbol || 'BTC';
-      console.log(`Loading fallback search for: ${baseSymbol}`);
-      return `https://dexscreener.com/?q=${baseSymbol}&embed=1&theme=dark`;
+      console.log(`Loading fallback search for: ${baseSymbol} with interval ${selectedInterval}`);
+      return `https://dexscreener.com/?q=${baseSymbol}&embed=1&theme=dark&interval=${dexInterval}`;
     } else {
-      // Original trending charts data
+      // Original trending charts data with selected interval
       const chainId = pair.chainId;
       const pairAddress = pair.pairAddress;
-      return `https://dexscreener.com/${chainId}/${pairAddress}?embed=1&theme=dark&trades=0&info=0&hidegrid=1&hidevolume=1&hidestatus=1&hidelegend=1&hide_top_toolbar=1&hide_side_toolbar=1&intervals_disabled=1&withdateranges=0&details=0&hotlist=0&calendar=0&tab=chart`;
+      return `https://dexscreener.com/${chainId}/${pairAddress}?embed=1&theme=dark&trades=0&info=0&hidegrid=1&hidevolume=1&hidestatus=1&hidelegend=1&hide_top_toolbar=1&hide_side_toolbar=1&intervals_disabled=1&withdateranges=0&details=0&hotlist=0&calendar=0&tab=chart&interval=${dexInterval}`;
     }
   };
 
