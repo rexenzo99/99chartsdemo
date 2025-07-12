@@ -458,6 +458,66 @@ function App() {
     
     setLoading(true);
     
+    // Check if we have cached trending metadata
+    if (trendingMetadataSessionId) {
+      try {
+        console.log('Using cached trending metadata...'); // Debug log
+        
+        // Get cached metadata from backend
+        const metadataResponse = await axios.get(`${BACKEND_URL}/api/get-trending-metadata/${trendingMetadataSessionId}`);
+        
+        if (metadataResponse.data.success && metadataResponse.data.charts) {
+          const cachedCharts = metadataResponse.data.charts;
+          
+          // Match filled tickers with cached chart data
+          const matchedCharts = [];
+          
+          for (const ticker of filledTickers) {
+            // Find matching chart in cached data
+            const matchingChart = cachedCharts.find(chart => {
+              if (chart.baseToken?.symbol && chart.quoteToken?.symbol) {
+                const cachedTicker = `${chart.baseToken.symbol.toUpperCase()}${chart.quoteToken.symbol.toUpperCase()}`;
+                return cachedTicker === ticker;
+              }
+              return false;
+            });
+            
+            if (matchingChart) {
+              matchedCharts.push({
+                ...matchingChart,
+                originalTicker: ticker,
+                isCustom: true,
+                isCached: true // Flag to indicate this is cached data
+              });
+            }
+          }
+          
+          if (matchedCharts.length > 0) {
+            console.log(`Found ${matchedCharts.length} cached charts for trending tickers`);
+            
+            // Randomize the matched charts
+            const randomizedCharts = [...matchedCharts].sort(() => Math.random() - 0.5);
+            
+            // Set up for analysis with cached data
+            setUsingCustomTickers(true);
+            setCharts(randomizedCharts);
+            setCurrentScreen('hot-or-not');
+            setCurrentIndex(0);
+            setLoading(false);
+            
+            // Generate session ID for this analysis
+            generateCustomSession();
+            return;
+          }
+        }
+      } catch (metadataError) {
+        console.error('Failed to get cached metadata, falling back to search:', metadataError);
+      }
+    }
+    
+    // Fallback: Original search logic for non-cached tickers
+    console.log('Using search fallback for custom tickers...'); // Debug log
+    
     // Randomize the tickers
     const randomizedTickers = [...filledTickers].sort(() => Math.random() - 0.5);
     
@@ -468,7 +528,7 @@ function App() {
     
     for (const ticker of randomizedTickers) {
       try {
-        const baseSymbol = ticker.replace('USDT', '');
+        const baseSymbol = ticker.replace(/USDT$|USDC$|SOL$|ETH$/i, '');
         console.log(`Searching for pairs for ${baseSymbol}...`);
         
         // Use Dexscreener search API to find actual pairs
@@ -523,7 +583,7 @@ function App() {
       } catch (error) {
         console.error(`Failed to fetch data for ${ticker}:`, error);
         // Add mock data as fallback
-        const baseSymbol = ticker.replace('USDT', '');
+        const baseSymbol = ticker.replace(/USDT$|USDC$|SOL$|ETH$/i, '');
         customCharts.push({
           chainId: 'ethereum',
           pairAddress: `mock_${ticker}_${Date.now()}`,
