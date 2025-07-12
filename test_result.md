@@ -143,8 +143,11 @@ metadata:
 
 test_plan:
   current_focus:
-    - "All backend API endpoints tested and working"
-  stuck_tasks: []
+    - "Frontend React App Loading and Initialization"
+    - "Chart Navigation and Choice Recording"
+    - "Results Page and Session Management"
+  stuck_tasks:
+    - "Frontend React App Loading and Initialization"
   test_all: true
   test_priority: "high_first"
 
