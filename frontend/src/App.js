@@ -91,14 +91,18 @@ function App() {
     if (!charts[currentIndex]) return '';
     const pair = charts[currentIndex];
     
-    // Check if this is a mock chart (custom ticker) or real dexscreener data
-    if (pair.pairAddress && pair.pairAddress.startsWith('mock_')) {
-      // For custom tickers, search for the token on dexscreener
-      const baseSymbol = pair.baseToken?.symbol || 'BTC';
-      // Try to find a real pair for this token by searching
-      return `https://dexscreener.com/ethereum/${baseSymbol.toLowerCase()}?embed=1&theme=dark&trades=0&info=0&hidegrid=1&hidevolume=1&hidestatus=1&hidelegend=1&hide_top_toolbar=1&hide_side_toolbar=1&intervals_disabled=1&withdateranges=0&details=0&hotlist=0&calendar=0&tab=chart`;
+    // Check if this is a custom ticker (from ticker selection)
+    if (pair.chainId === 'custom' && pair.originalTicker) {
+      // For custom tickers, search for the token on dexscreener using the original ticker
+      const ticker = pair.originalTicker;
+      const baseSymbol = ticker.replace('USDT', '');
+      
+      console.log(`Loading chart for custom ticker: ${ticker} (${baseSymbol})`); // Debug log
+      
+      // Search for this specific token pair on dexscreener
+      return `https://dexscreener.com/search?q=${baseSymbol}?embed=1&theme=dark&trades=0&info=0&hidegrid=1&hidevolume=1&hidestatus=1&hidelegend=1&hide_top_toolbar=1&hide_side_toolbar=1&intervals_disabled=1&withdateranges=0&details=0&hotlist=0&calendar=0&tab=chart`;
     } else {
-      // Real dexscreener data with actual chainId and pairAddress
+      // Real dexscreener data with actual chainId and pairAddress  
       const chainId = pair.chainId;
       const pairAddress = pair.pairAddress;
       return `https://dexscreener.com/${chainId}/${pairAddress}?embed=1&theme=dark&trades=0&info=0&hidegrid=1&hidevolume=1&hidestatus=1&hidelegend=1&hide_top_toolbar=1&hide_side_toolbar=1&intervals_disabled=1&withdateranges=0&details=0&hotlist=0&calendar=0&tab=chart`;
