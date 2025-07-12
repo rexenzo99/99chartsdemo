@@ -82,11 +82,11 @@ function App() {
 
   const getCurrentChartUrl = () => {
     if (!charts[currentIndex]) return '';
-    const pair = charts[currentIndex];
-    const chainId = pair.chainId;
-    const pairAddress = pair.pairAddress;
-    // Apply your custom settings: no volume, no grid, no status, clean chart
-    return `https://dexscreener.com/${chainId}/${pairAddress}?embed=1&theme=dark&trades=0&info=0&hidegrid=1&hidevolume=1&hidestatus=1&hidelegend=1&hide_top_toolbar=1&hide_side_toolbar=1&intervals_disabled=1&withdateranges=0&details=0&hotlist=0&calendar=0&tab=chart`;
+    const chart = charts[currentIndex];
+    const symbol = chart.symbol; // e.g., "BINANCE:BTCUSDT"
+    
+    // TradingView embed with your custom settings
+    return `https://www.tradingview.com/widgetembed/?frameElementId=tradingview_chart&symbol=${symbol}&interval=D&hidesidetoolbar=1&hidetoptoolbar=1&symboledit=0&saveimage=0&toolbarbg=f1f3f6&studies=[]&hidevolume=1&theme=dark&style=1&timezone=Etc%2FUTC&withdateranges=0&hideideas=1&studies_overrides={}&overrides={"paneProperties.background":"#1e1e1e","paneProperties.vertGridProperties.color":"rgba(0,0,0,0)","paneProperties.horzGridProperties.color":"rgba(0,0,0,0)","symbolWatermarkProperties.transparency":100,"scalesProperties.textColor":"#ffffff"}&enabled_features=[]&disabled_features=["left_toolbar","header_widget","timeframes_toolbar","edit_buttons_in_legend","context_menus","control_bar","border_around_the_chart","volume_force_overlay","create_volume_indicator_by_default"]`;
   };
 
   const resetSession = () => {
