@@ -82,7 +82,13 @@ function App() {
   };
 
   const getConfigurationChartUrl = () => {
-    // BTC/USDT from Binance (using BSC since it's well supported on Dexscreener)
+    // Use the same chart that will be the first trending chart for configuration
+    // This tests if the issue is caused by switching between different token pairs
+    if (charts.length > 0) {
+      const firstChart = charts[0];
+      return `https://dexscreener.com/${firstChart.chainId}/${firstChart.pairAddress}?embed=1&theme=dark&trades=0&info=0`;
+    }
+    // Fallback to BTC/USDT if charts not loaded yet
     return `https://dexscreener.com/bsc/0x61eb789d75a95caa3ff50ed7e47b96c132fec082?embed=1&theme=dark&trades=0&info=0`;
   };
 
