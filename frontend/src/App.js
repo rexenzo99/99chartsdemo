@@ -551,75 +551,77 @@ function App() {
           </div>
 
           {/* Side by Side Charts */}
-          <div className="grid grid-cols-2 gap-8 mb-8">
-            {/* Left Chart */}
-            <div className="space-y-4">
-              <div className="text-center">
-                <h3 className="text-xl font-bold text-white mb-2">
-                  {currentMatchup.left?.baseToken?.symbol || 'Chart A'}
-                </h3>
-                <p className="text-gray-400">
-                  {currentMatchup.left?.baseToken?.name || 'Token A'}
-                </p>
-              </div>
-              <div 
-                className="w-full aspect-square border-4 rounded-lg overflow-hidden bg-gray-800 cursor-pointer transition-all duration-300 hover:border-blue-500 border-gray-600"
-                onClick={() => selectTournamentWinner(currentMatchup.left)}
-              >
-                <iframe
-                  key={`tournament-left-${currentMatchup.left?.pairAddress}-${selectedInterval}`}
-                  src={getChartUrl(currentMatchup.left)}
-                  className="w-full h-full"
-                  title={`Chart for ${currentMatchup.left?.baseToken?.symbol || 'Chart A'}`}
-                  frameBorder="0"
-                />
-              </div>
-              <div className="text-center">
-                <button
+          <div className="relative">
+            <div className="grid grid-cols-2 gap-8 mb-8">
+              {/* Left Chart */}
+              <div className="space-y-4">
+                <div className="text-center">
+                  <h3 className="text-xl font-bold text-white mb-2">
+                    {currentMatchup.left?.baseToken?.symbol || 'Chart A'}
+                  </h3>
+                  <p className="text-gray-400">
+                    {currentMatchup.left?.baseToken?.name || 'Token A'}
+                  </p>
+                </div>
+                <div 
+                  className="w-full aspect-square border-4 rounded-lg overflow-hidden bg-gray-800 cursor-pointer transition-all duration-300 hover:border-blue-500 border-gray-600"
                   onClick={() => selectTournamentWinner(currentMatchup.left)}
-                  className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold text-lg transition-colors border-2 border-blue-500 shadow-lg"
                 >
-                  Choose This Chart
-                </button>
+                  <iframe
+                    key={`tournament-left-${currentMatchup.left?.pairAddress}-${selectedInterval}`}
+                    src={getChartUrl(currentMatchup.left)}
+                    className="w-full h-full"
+                    title={`Chart for ${currentMatchup.left?.baseToken?.symbol || 'Chart A'}`}
+                    frameBorder="0"
+                  />
+                </div>
+                <div className="text-center">
+                  <button
+                    onClick={() => selectTournamentWinner(currentMatchup.left)}
+                    className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold text-lg transition-colors border-2 border-blue-500 shadow-lg"
+                  >
+                    Choose This Chart
+                  </button>
+                </div>
               </div>
-            </div>
 
-            {/* VS Divider */}
-            <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
-              <div className="bg-gray-800 border-4 border-gray-600 rounded-full w-16 h-16 flex items-center justify-center">
-                <span className="text-white font-bold text-lg">VS</span>
-              </div>
-            </div>
-
-            {/* Right Chart */}
-            <div className="space-y-4">
-              <div className="text-center">
-                <h3 className="text-xl font-bold text-white mb-2">
-                  {currentMatchup.right?.baseToken?.symbol || 'Chart B'}
-                </h3>
-                <p className="text-gray-400">
-                  {currentMatchup.right?.baseToken?.name || 'Token B'}
-                </p>
-              </div>
-              <div 
-                className="w-full aspect-square border-4 rounded-lg overflow-hidden bg-gray-800 cursor-pointer transition-all duration-300 hover:border-blue-500 border-gray-600"
-                onClick={() => selectTournamentWinner(currentMatchup.right)}
-              >
-                <iframe
-                  key={`tournament-right-${currentMatchup.right?.pairAddress}-${selectedInterval}`}
-                  src={getChartUrl(currentMatchup.right)}
-                  className="w-full h-full"
-                  title={`Chart for ${currentMatchup.right?.baseToken?.symbol || 'Chart B'}`}
-                  frameBorder="0"
-                />
-              </div>
-              <div className="text-center">
-                <button
+              {/* Right Chart */}
+              <div className="space-y-4">
+                <div className="text-center">
+                  <h3 className="text-xl font-bold text-white mb-2">
+                    {currentMatchup.right?.baseToken?.symbol || 'Chart B'}
+                  </h3>
+                  <p className="text-gray-400">
+                    {currentMatchup.right?.baseToken?.name || 'Token B'}
+                  </p>
+                </div>
+                <div 
+                  className="w-full aspect-square border-4 rounded-lg overflow-hidden bg-gray-800 cursor-pointer transition-all duration-300 hover:border-blue-500 border-gray-600"
                   onClick={() => selectTournamentWinner(currentMatchup.right)}
-                  className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold text-lg transition-colors border-2 border-blue-500 shadow-lg"
                 >
-                  Choose This Chart
-                </button>
+                  <iframe
+                    key={`tournament-right-${currentMatchup.right?.pairAddress}-${selectedInterval}`}
+                    src={getChartUrl(currentMatchup.right)}
+                    className="w-full h-full"
+                    title={`Chart for ${currentMatchup.right?.baseToken?.symbol || 'Chart B'}`}
+                    frameBorder="0"
+                  />
+                </div>
+                <div className="text-center">
+                  <button
+                    onClick={() => selectTournamentWinner(currentMatchup.right)}
+                    className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold text-lg transition-colors border-2 border-blue-500 shadow-lg"
+                  >
+                    Choose This Chart
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* VS Divider - Centered between charts */}
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-16 z-10">
+              <div className="bg-gray-800 border-4 border-gray-600 rounded-full w-16 h-16 flex items-center justify-center shadow-lg">
+                <span className="text-white font-bold text-lg">VS</span>
               </div>
             </div>
           </div>
