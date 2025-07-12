@@ -61,7 +61,10 @@ function App() {
 
       // Move to next chart or show results
       if (currentIndex < charts.length - 1) {
-        setCurrentIndex(currentIndex + 1);
+        // Add delay before transitioning to let TradingView sync settings
+        setTimeout(() => {
+          setCurrentIndex(currentIndex + 1);
+        }, 500);
       } else {
         // All charts completed, show results
         showSessionResults();
