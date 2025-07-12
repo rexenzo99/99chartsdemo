@@ -82,11 +82,11 @@ function App() {
 
   const getCurrentChartUrl = () => {
     if (!charts[currentIndex]) return '';
-    const chart = charts[currentIndex];
-    const symbol = chart.baseToken?.symbol || 'BTC';
-    
-    // Fallback to a working chart solution - using CoinGecko chart widget
-    return `https://www.coingecko.com/en/coins/${symbol.toLowerCase()}/embedded_chart?theme=dark`;
+    const pair = charts[currentIndex];
+    const chainId = pair.chainId;
+    const pairAddress = pair.pairAddress;
+    // Back to working Dexscreener with your custom settings
+    return `https://dexscreener.com/${chainId}/${pairAddress}?embed=1&theme=dark&trades=0&info=0&hidegrid=1&hidevolume=1&hidestatus=1&hidelegend=1&hide_top_toolbar=1&hide_side_toolbar=1&intervals_disabled=1&withdateranges=0&details=0&hotlist=0&calendar=0&tab=chart`;
   };
 
   const resetSession = () => {
