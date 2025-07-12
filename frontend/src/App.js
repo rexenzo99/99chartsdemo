@@ -93,14 +93,30 @@ function App() {
     
     // Check if this is a custom ticker (from ticker selection)
     if (pair.chainId === 'custom' && pair.originalTicker) {
-      // For custom tickers, use direct dexscreener search
+      // For custom tickers, try to build a more direct URL
       const ticker = pair.originalTicker;
       const baseSymbol = ticker.replace('USDT', '');
       
       console.log(`Loading chart for custom ticker: ${ticker} (${baseSymbol})`); // Debug log
       
-      // Use dexscreener search format that works
-      return `https://dexscreener.com/?q=${baseSymbol}&embed=1&theme=dark&trades=0&info=0`;
+      // Try different approaches for common tokens
+      const commonTokenMappings = {
+        'BTC': 'ethereum/0xa0b86a33e6ee6c97c23b6b8b2c77b8b56cd1dcf3',
+        'ETH': 'ethereum/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
+        'BCH': 'ethereum/0x8fff93e810a2edaafc326edee51071da9d398e83',
+        'SOL': 'solana/6bm5xpznj2vvjqchdhffnfbz9v8bgjwtbfnmdqfn',
+        'ADA': 'ethereum/0x3ee2200efb3400fabb9aacf31297cbdd1d435d47',
+        'XRP': 'ethereum/0x1d2f0da169ceb9fc7b3144628db156f3f6c60dbe',
+        'DOGE': 'ethereum/0x4206931337dc273a630d328da6441786bfad668f'
+      };
+      
+      if (commonTokenMappings[baseSymbol]) {
+        // Use known pair address for common tokens
+        return `https://dexscreener.com/${commonTokenMappings[baseSymbol]}?embed=1&theme=dark&trades=0&info=0&hidegrid=1&hidevolume=1&hidestatus=1&hidelegend=1&hide_top_toolbar=1&hide_side_toolbar=1&intervals_disabled=1&withdateranges=0&details=0&hotlist=0&calendar=0&tab=chart`;
+      } else {
+        // For unknown tokens, use a simpler search approach
+        return `https://dexscreener.com/ethereum?q=${baseSymbol}&embed=1&theme=dark`;
+      }
     } else {
       // Real dexscreener data with actual chainId and pairAddress  
       const chainId = pair.chainId;
