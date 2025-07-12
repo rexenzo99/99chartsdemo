@@ -92,7 +92,8 @@ function App() {
       const originalChart = charts[choice.chart_index];
       return {
         ...originalChart,
-        choiceIndex: choice.chart_index
+        choiceIndex: choice.chart_index,
+        losses: 0 // Track losses for double elimination
       };
     });
 
@@ -102,8 +103,14 @@ function App() {
       return;
     }
 
-    // Set up tournament
+    // Set up double elimination tournament
     setTournamentCharts(tournamentPool);
+    setWinnersbracket([...tournamentPool]);
+    setLosersbracket([]);
+    setEliminatedCharts([]);
+    setTournamentPhase('winners');
+    
+    // Start first matchup
     setCurrentMatchup({
       left: tournamentPool[0],
       right: tournamentPool[1]
@@ -112,35 +119,86 @@ function App() {
   };
 
   const selectTournamentWinner = (winner) => {
-    // Add winner to tournament winners
-    const newWinners = [...tournamentWinners, winner];
-    setTournamentWinners(newWinners);
+    const loser = winner === currentMatchup.left ? currentMatchup.right : currentMatchup.left;
+    
+    if (tournamentPhase === 'winners') {
+      // Winners bracket - loser goes to losers bracket
+      const updatedLoser = { ...loser, losses: loser.losses + 1 };
+      setLosersbracket(prev => [...prev, updatedLoser]);
+      
+      // Remove both from winners bracket
+      const remainingWinners = winnersbracket.filter(chart => 
+        chart !== currentMatchup.left && chart !== currentMatchup.right
+      );
+      
+      // Add winner back to winners bracket
+      const updatedWinners = [...remainingWinners, winner];
+      setWinnersbracket(updatedWinners);
+      
+      if (updatedWinners.length === 1) {
+        // Winners bracket complete, start losers bracket
+        setTournamentPhase('losers');
+        setupNextMatchup();
+      } else {
+        // Continue winners bracket
+        setupNextMatchup();
+      }
+    } else if (tournamentPhase === 'losers') {
+      // Losers bracket - loser is eliminated
+      const updatedLoser = { ...loser, losses: loser.losses + 1 };
+      setEliminatedCharts(prev => [...prev, updatedLoser]);
+      
+      // Continue in losers bracket
+      const remainingLosers = losersbracket.filter(chart =>
+        chart !== currentMatchup.left && chart !== currentMatchup.right
+      );
+      
+      const updatedLosers = [...remainingLosers, winner];
+      setLosersbracket(updatedLosers);
+      
+      if (updatedLosers.length === 1 && winnersbracket.length === 1) {
+        // Ready for grand finals
+        setTournamentPhase('grandfinals');
+        setCurrentMatchup({
+          left: winnersbracket[0],
+          right: updatedLosers[0]
+        });
+      } else {
+        setupNextMatchup();
+      }
+    } else if (tournamentPhase === 'grandfinals') {
+      // Grand finals logic
+      if (winner === winnersbracket[0]) {
+        // Winners bracket champion wins - tournament over
+        setFinalRankings([
+          winner, // 1st place
+          loser,  // 2nd place  
+          eliminatedCharts[eliminatedCharts.length - 1] // 3rd place (last eliminated)
+        ]);
+        showSessionResults();
+      } else {
+        // Losers bracket champion wins - reset winners bracket champion
+        const resetWinner = { ...winnersbracket[0], losses: 1 };
+        // Play one more time since winners bracket needs to lose twice
+        setCurrentMatchup({
+          left: winner,
+          right: resetWinner
+        });
+      }
+    }
+  };
 
-    // Get remaining unmatched charts
-    const remainingCharts = tournamentCharts.filter(chart => 
-      chart !== currentMatchup.left && chart !== currentMatchup.right
-    );
-
-    // Add the winner back to remaining pool
-    const updatedPool = [...remainingCharts, winner];
-
-    if (updatedPool.length < 2) {
-      // Tournament complete - show results
-      showSessionResults();
-    } else if (updatedPool.length === 2) {
-      // Final matchup
+  const setupNextMatchup = () => {
+    if (tournamentPhase === 'winners' && winnersbracket.length >= 2) {
       setCurrentMatchup({
-        left: updatedPool[0],
-        right: updatedPool[1]
+        left: winnersbracket[0],
+        right: winnersbracket[1]
       });
-      setTournamentCharts(updatedPool);
-    } else {
-      // Continue tournament with next matchup
+    } else if (tournamentPhase === 'losers' && losersbracket.length >= 2) {
       setCurrentMatchup({
-        left: updatedPool[0],
-        right: updatedPool[1]
+        left: losersbracket[0],
+        right: losersbracket[1]
       });
-      setTournamentCharts(updatedPool);
     }
   };
 
