@@ -821,6 +821,7 @@ function App() {
       
       return (
         <div className="min-h-screen bg-gray-900 p-6">
+          <Confetti isActive={showConfetti} />
           <div className="max-w-7xl mx-auto">
             {/* Wide-screen results header */}
             <div className="text-center mb-8">
