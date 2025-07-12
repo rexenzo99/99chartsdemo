@@ -85,8 +85,8 @@ function App() {
     const pair = charts[currentIndex];
     const chainId = pair.chainId;
     const pairAddress = pair.pairAddress;
-    // Aggressive hiding: remove volume, grid, toolbars, indicators, everything
-    return `https://dexscreener.com/${chainId}/${pairAddress}?embed=1&theme=dark&trades=0&info=0&hide_top_toolbar=1&hide_side_toolbar=1&hide_legend=1&hide_symbol_search=1&hidevolume=true&volume=false&studies_overrides=%7B%22volume.volume.color.0%22%3A%22rgba(0%2C0%2C0%2C0)%22%2C%22volume.volume.color.1%22%3A%22rgba(0%2C0%2C0%2C0)%22%2C%22volume.volume.transparency%22%3A100%7D&overrides=%7B%22paneProperties.background%22%3A%22%23000000%22%2C%22paneProperties.vertGridProperties.color%22%3A%22rgba(0%2C0%2C0%2C0)%22%2C%22paneProperties.horzGridProperties.color%22%3A%22rgba(0%2C0%2C0%2C0)%22%2C%22symbolWatermarkProperties.transparency%22%3A100%2C%22scalesProperties.textColor%22%3A%22%23ffffff%22%7D&disabled_features=%5B%22volume_force_overlay%22%2C%22create_volume_indicator_by_default%22%2C%22header_indicators%22%2C%22header_compare%22%2C%22header_undo_redo%22%2C%22header_screenshot%22%2C%22header_chart_type%22%2C%22header_settings%22%2C%22left_toolbar%22%2C%22timeframes_toolbar%22%2C%22edit_buttons_in_legend%22%2C%22context_menus%22%2C%22control_bar%22%2C%22border_around_the_chart%22%7D`;
+    // Back to simple embed - we'll use CSS to hide unwanted elements
+    return `https://dexscreener.com/${chainId}/${pairAddress}?embed=1&theme=dark&trades=0&info=0`;
   };
 
   const resetSession = () => {
