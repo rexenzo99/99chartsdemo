@@ -92,6 +92,7 @@ function App() {
   const [eliminatedCharts, setEliminatedCharts] = useState([]); // Double-eliminated charts
   const [tournamentPhase, setTournamentPhase] = useState('winners'); // 'winners', 'losers', 'grandfinals'
   const [finalRankings, setFinalRankings] = useState([]); // Top 3 results
+  const [showConfetti, setShowConfetti] = useState(false); // Confetti animation state
 
   useEffect(() => {
     if (currentScreen === 'hot-or-not' && !usingCustomTickers) {
