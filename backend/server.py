@@ -47,6 +47,35 @@ class SessionResult(BaseModel):
 async def root():
     return {"message": "Charts Demo API is running"}
 
+@app.post("/api/store-trending-metadata")
+async def store_trending_metadata(metadata: dict):
+    """Store trending charts metadata temporarily"""
+    try:
+        session_id = metadata.get('session_id')
+        charts_data = metadata.get('charts', [])
+        
+        if session_id and charts_data:
+            trending_metadata_cache[session_id] = charts_data
+            return {"success": True, "message": f"Stored metadata for {len(charts_data)} charts"}
+        else:
+            raise HTTPException(status_code=400, detail="Missing session_id or charts data")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to store metadata: {str(e)}")
+
+@app.get("/api/get-trending-metadata/{session_id}")
+async def get_trending_metadata(session_id: str):
+    """Retrieve stored trending charts metadata"""
+    try:
+        if session_id in trending_metadata_cache:
+            return {
+                "success": True,
+                "charts": trending_metadata_cache[session_id]
+            }
+        else:
+            raise HTTPException(status_code=404, detail="No trending metadata found for this session")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get metadata: {str(e)}")
+
 @app.get("/api/trending-charts")
 async def get_trending_charts():
     """Fetch top 32 trending charts from multiple sources"""
