@@ -95,8 +95,8 @@ function App() {
     const pair = charts[currentIndex];
     const chainId = pair.chainId;
     const pairAddress = pair.pairAddress;
-    // Remove embed parameters to preserve custom settings from configuration
-    return `https://dexscreener.com/${chainId}/${pairAddress}`;
+    // Try embed with chart tab default - preserving custom settings while hiding other tabs
+    return `https://dexscreener.com/${chainId}/${pairAddress}?embed=1&theme=dark&trades=0&info=0&tab=chart`;
   };
 
   const startApp = () => {
