@@ -85,8 +85,8 @@ function App() {
     const pair = charts[currentIndex];
     const chainId = pair.chainId;
     const pairAddress = pair.pairAddress;
-    // Back to simple embed - we'll use CSS to hide unwanted elements
-    return `https://dexscreener.com/${chainId}/${pairAddress}?embed=1&theme=dark&trades=0&info=0`;
+    // Apply your custom settings: no volume, no grid, no status, clean chart
+    return `https://dexscreener.com/${chainId}/${pairAddress}?embed=1&theme=dark&trades=0&info=0&hidegrid=1&hidevolume=1&hidestatus=1&hidelegend=1&hide_top_toolbar=1&hide_side_toolbar=1&intervals_disabled=1&withdateranges=0&details=0&hotlist=0&calendar=0&tab=chart`;
   };
 
   const resetSession = () => {
