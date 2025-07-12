@@ -283,14 +283,14 @@ function App() {
       const leftChart = availableCharts[0];
       const rightChart = availableCharts[1];
       
-      // Double check they're different charts
-      if (leftChart.pairAddress !== rightChart.pairAddress) {
+      // Double check they're different charts using unique identifiers
+      if (leftChart.tournamentId !== rightChart.tournamentId) {
         setCurrentMatchup({
           left: leftChart,
           right: rightChart
         });
       } else {
-        console.error('Same chart matchup prevented:', leftChart, rightChart);
+        console.error('Same chart matchup prevented:', leftChart.tournamentId, rightChart.tournamentId);
         // If somehow same chart, try with different indices
         if (availableCharts.length > 2) {
           setCurrentMatchup({
@@ -305,14 +305,14 @@ function App() {
       const leftChart = availableCharts[0];
       const rightChart = availableCharts[1];
       
-      // Double check they're different charts
-      if (leftChart.pairAddress !== rightChart.pairAddress) {
+      // Double check they're different charts using unique identifiers
+      if (leftChart.tournamentId !== rightChart.tournamentId) {
         setCurrentMatchup({
           left: leftChart,
           right: rightChart
         });
       } else {
-        console.error('Same chart matchup prevented:', leftChart, rightChart);
+        console.error('Same chart matchup prevented:', leftChart.tournamentId, rightChart.tournamentId);
         // If somehow same chart, try with different indices
         if (availableCharts.length > 2) {
           setCurrentMatchup({
