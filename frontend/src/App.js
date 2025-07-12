@@ -333,6 +333,7 @@ function App() {
     setEliminatedCharts([]);
     setTournamentPhase('winners');
     setFinalRankings([]);
+    setShowConfetti(false); // Reset confetti
     setCurrentScreen('ticker-selection');
   };
 
