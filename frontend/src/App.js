@@ -12,10 +12,16 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [showResults, setShowResults] = useState(false);
   const [sessionResults, setSessionResults] = useState(null);
+  const [currentScreen, setCurrentScreen] = useState('ticker-selection'); // New state for screen management
+  const [tickers, setTickers] = useState(Array(32).fill('')); // 32 empty ticker slots
 
   useEffect(() => {
-    initializeSession();
-  }, []);
+    if (currentScreen === 'hot-or-not') {
+      initializeSession();
+    } else {
+      setLoading(false);
+    }
+  }, [currentScreen]);
 
   const initializeSession = async () => {
     try {
@@ -94,9 +100,68 @@ function App() {
     setChoices([]);
     setShowResults(false);
     setSessionResults(null);
-    initializeSession();
+    setCurrentScreen('ticker-selection');
   };
 
+  const handleTickerChange = (index, value) => {
+    const newTickers = [...tickers];
+    newTickers[index] = value.toUpperCase();
+    setTickers(newTickers);
+  };
+
+  const startHotOrNot = () => {
+    setCurrentScreen('hot-or-not');
+    setLoading(true);
+  };
+
+  // Ticker Selection Screen
+  if (currentScreen === 'ticker-selection') {
+    return (
+      <div className="min-h-screen bg-gray-900 p-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-white mb-4">Select Your Tickers</h1>
+            <p className="text-gray-300 text-lg">
+              Enter up to 32 ticker symbols to analyze
+            </p>
+          </div>
+
+          {/* 4x8 Grid of ticker inputs */}
+          <div className="grid grid-cols-4 gap-4 mb-8">
+            {tickers.map((ticker, index) => (
+              <input
+                key={index}
+                type="text"
+                value={ticker}
+                onChange={(e) => handleTickerChange(index, e.target.value)}
+                placeholder={`TICKER${index + 1}`}
+                className="bg-gray-700 border border-gray-600 text-white text-center py-4 px-2 rounded-lg text-lg font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-400"
+                maxLength={12}
+              />
+            ))}
+          </div>
+
+          {/* Action buttons */}
+          <div className="flex justify-center space-x-6">
+            <button
+              onClick={() => {/* TODO: Auto-populate function */}}
+              className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors border border-blue-500"
+            >
+              Auto-Populate Trending
+            </button>
+            <button
+              onClick={startHotOrNot}
+              className="px-8 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors border border-green-500"
+            >
+              Start Analysis
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Loading Screen
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
@@ -108,6 +173,7 @@ function App() {
     );
   }
 
+  // Results Screen
   if (showResults && sessionResults) {
     return (
       <div className="min-h-screen bg-gray-900 p-6">
@@ -171,6 +237,7 @@ function App() {
     );
   }
 
+  // No charts available
   if (!charts.length) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
@@ -187,6 +254,7 @@ function App() {
     );
   }
 
+  // Hot or Not Screen (Chart Analysis)
   return (
     <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
       <div className="w-full max-w-4xl">
