@@ -46,14 +46,75 @@ async def root():
 
 @app.get("/api/trending-charts")
 async def get_trending_charts():
-    """Fetch your 3 specific trading pairs from Dexscreener"""
+    """Fetch top 32 trending charts from Dexscreener over past 6 hours"""
     try:
+        # Try to get trending tokens from Dexscreener
+        try:
+            url = "https://api.dexscreener.com/token-profiles/latest/top-pools"
+            response = requests.get(url, timeout=10)
+            response.raise_for_status()
+            
+            data = response.json()
+            if data and len(data) > 0:
+                # Take top 32 trending pools
+                trending_pairs = data[:32]
+                return {
+                    "success": True,
+                    "charts": trending_pairs,
+                    "total": len(trending_pairs)
+                }
+        except Exception as trending_error:
+            print(f"Failed to get trending pools: {trending_error}")
+        
+        # Fallback: Get gainers from multiple chains
+        try:
+            all_pairs = []
+            chains = ["ethereum", "bsc", "polygon", "arbitrum", "base", "solana"]
+            
+            for chain in chains:
+                try:
+                    url = f"https://api.dexscreener.com/latest/dex/pairs/{chain}"
+                    response = requests.get(url, timeout=10)
+                    response.raise_for_status()
+                    
+                    data = response.json()
+                    pairs = data.get('pairs', [])
+                    
+                    if pairs:
+                        # Filter for pairs with good volume and recent activity
+                        filtered_pairs = []
+                        for pair in pairs:
+                            volume_6h = float(pair.get('volume', {}).get('h6', 0) or 0)
+                            price_change_6h = float(pair.get('priceChange', {}).get('h6', 0) or 0)
+                            
+                            # Only include pairs with significant 6h volume and price movement
+                            if volume_6h > 10000 and abs(price_change_6h) > 2:
+                                filtered_pairs.append(pair)
+                        
+                        all_pairs.extend(filtered_pairs[:6])  # Top 6 from each chain
+                        
+                except Exception as chain_error:
+                    print(f"Failed to get pairs from {chain}: {chain_error}")
+                    continue
+            
+            if all_pairs:
+                # Sort by 6-hour price change percentage (highest gainers first)
+                all_pairs.sort(key=lambda x: float(x.get('priceChange', {}).get('h6', 0) or 0), reverse=True)
+                top_trending = all_pairs[:32]
+                
+                return {
+                    "success": True,
+                    "charts": top_trending,
+                    "total": len(top_trending)
+                }
+        except Exception as fallback_error:
+            print(f"Fallback method failed: {fallback_error}")
+        
+        # Final fallback: Search for popular trending tokens
         all_pairs = []
+        trending_tokens = ["PEPE", "SHIB", "DOGE", "WIF", "BONK", "FLOKI", "MEME", "WOJAK", "TRUMP", "ELON", "AI", "RWA", "DEFI", "GAMING", "NFT", "META"]
         
-        # Your specific tokens
-        search_tokens = ["BTC", "ETH", "SOL"]
-        
-        for token in search_tokens:
+        for token in trending_tokens:
             try:
                 url = f"https://api.dexscreener.com/latest/dex/search?q={token}"
                 response = requests.get(url, timeout=10)
@@ -63,18 +124,27 @@ async def get_trending_charts():
                 pairs = data.get('pairs', [])
                 
                 if pairs:
-                    # Take just the first best pair for each token
-                    all_pairs.append(pairs[0])
+                    # Take top 2 pairs for each trending token
+                    all_pairs.extend(pairs[:2])
                     
             except Exception as search_error:
                 print(f"Failed to search for {token}: {search_error}")
                 continue
         
-        return {
-            "success": True,
-            "charts": all_pairs,
-            "total": len(all_pairs)
-        }
+        # Sort by volume and take top 32
+        if all_pairs:
+            all_pairs.sort(key=lambda x: float(x.get('volume', {}).get('h24', 0) or 0), reverse=True)
+            top_trending = all_pairs[:32]
+            
+            return {
+                "success": True,
+                "charts": top_trending,
+                "total": len(top_trending)
+            }
+        
+        # If everything fails, return empty
+        raise HTTPException(status_code=500, detail="Could not fetch trending charts")
+        
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to fetch trending charts: {str(e)}")
 
