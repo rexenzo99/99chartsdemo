@@ -95,8 +95,8 @@ function App() {
     const pair = charts[currentIndex];
     const chainId = pair.chainId;
     const pairAddress = pair.pairAddress;
-    // Using embed parameters to show only chart without tabs and extra UI
-    return `https://dexscreener.com/${chainId}/${pairAddress}?embed=1&theme=dark&trades=0&info=0`;
+    // Remove embed parameters to preserve custom settings from configuration
+    return `https://dexscreener.com/${chainId}/${pairAddress}`;
   };
 
   const startApp = () => {
