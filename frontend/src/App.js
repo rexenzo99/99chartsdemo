@@ -112,19 +112,48 @@ function App() {
   const loadTopMarketCap = async () => {
     try {
       setLoading(true);
-      // Using CoinGecko API for top market cap tokens
-      const response = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=32&page=1&sparkline=false');
+      // Fetch more tokens initially to account for filtering
+      const response = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=false');
       const data = await response.json();
       
       if (data && data.length > 0) {
-        const newTickers = [...tickers];
-        data.forEach((coin, index) => {
-          if (index < 32) {
-            // Convert coin symbol to ticker format (e.g., BTC -> BTCUSDT)
-            newTickers[index] = `${coin.symbol.toUpperCase()}USDT`;
+        // Excluded tickers (stablecoins, wrapped tokens, etc.)
+        const excludedTickers = [
+          'USDTUSDT',
+          'USDCUSDT', 
+          'STETHUSDT',
+          'WBTCUSDT',
+          'WSTETHUSDT',
+          'LEOUSDT',
+          'WEETHUSDT',
+          'WETHUSDT',
+          'USDSUSDT',
+          'WBTUSDT',
+          'BSC-USDUSDT',
+          'CBBTCUSDT'
+        ];
+        
+        const newTickers = [];
+        
+        // Filter and convert coins to ticker format
+        for (const coin of data) {
+          if (newTickers.length >= 32) break;
+          
+          const ticker = `${coin.symbol.toUpperCase()}USDT`;
+          
+          // Skip if ticker is in excluded list
+          if (!excludedTickers.includes(ticker)) {
+            newTickers.push(ticker);
           }
-        });
-        setTickers(newTickers);
+        }
+        
+        // Fill remaining slots if we don't have 32
+        const finalTickers = [...newTickers];
+        while (finalTickers.length < 32) {
+          finalTickers.push('');
+        }
+        
+        setTickers(finalTickers);
       }
       setLoading(false);
     } catch (error) {
