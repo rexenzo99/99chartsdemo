@@ -73,11 +73,70 @@ function App() {
       if (currentIndex < charts.length - 1) {
         setCurrentIndex(currentIndex + 1);
       } else {
-        // All charts completed, show results
-        showSessionResults();
+        // All charts completed, start tournament
+        startTournament();
       }
     } catch (error) {
       console.error('Failed to record choice:', error);
+    }
+  };
+
+  const startTournament = () => {
+    // Get all the green (positive) choices for tournament
+    const greenChoices = choices.filter(choice => choice.choice === 'green');
+    const tournamentPool = greenChoices.map(choice => {
+      const originalChart = charts[choice.chart_index];
+      return {
+        ...originalChart,
+        choiceIndex: choice.chart_index
+      };
+    });
+
+    if (tournamentPool.length < 2) {
+      // Not enough green choices, show results directly
+      showSessionResults();
+      return;
+    }
+
+    // Set up tournament
+    setTournamentCharts(tournamentPool);
+    setCurrentMatchup({
+      left: tournamentPool[0],
+      right: tournamentPool[1]
+    });
+    setCurrentScreen('tournament');
+  };
+
+  const selectTournamentWinner = (winner) => {
+    // Add winner to tournament winners
+    const newWinners = [...tournamentWinners, winner];
+    setTournamentWinners(newWinners);
+
+    // Get remaining unmatched charts
+    const remainingCharts = tournamentCharts.filter(chart => 
+      chart !== currentMatchup.left && chart !== currentMatchup.right
+    );
+
+    // Add the winner back to remaining pool
+    const updatedPool = [...remainingCharts, winner];
+
+    if (updatedPool.length < 2) {
+      // Tournament complete - show results
+      showSessionResults();
+    } else if (updatedPool.length === 2) {
+      // Final matchup
+      setCurrentMatchup({
+        left: updatedPool[0],
+        right: updatedPool[1]
+      });
+      setTournamentCharts(updatedPool);
+    } else {
+      // Continue tournament with next matchup
+      setCurrentMatchup({
+        left: updatedPool[0],
+        right: updatedPool[1]
+      });
+      setTournamentCharts(updatedPool);
     }
   };
 
