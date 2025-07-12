@@ -336,6 +336,8 @@ function App() {
 
   // Ticker Selection Screen
   if (currentScreen === 'ticker-selection') {
+    const intervals = ['15m', '30m', '1h', '4h', '1d', '1w'];
+    
     return (
       <div className="min-h-screen bg-gray-900 p-6">
         <div className="max-w-7xl mx-auto">
@@ -346,32 +348,55 @@ function App() {
             </p>
           </div>
 
-          {/* Auto-populate buttons */}
-          <div className="flex justify-center space-x-4 mb-6">
-            <button
-              onClick={loadTopMarketCap}
-              disabled={loading}
-              className="px-6 py-3 bg-red-600 hover:bg-red-700 disabled:bg-gray-600 text-white rounded-lg font-medium transition-colors border border-red-500 flex items-center space-x-2"
-            >
-              <span>📊</span>
-              <span>Top Market Cap</span>
-            </button>
-            <button
-              onClick={loadTrendingSearch}
-              disabled={loading}
-              className="px-6 py-3 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 text-white rounded-lg font-medium transition-colors border border-green-500 flex items-center space-x-2"
-            >
-              <span>🔥</span>
-              <span>Trending Search</span>
-            </button>
-            <button
-              onClick={clearAllTickers}
-              disabled={loading}
-              className="px-6 py-3 bg-gray-600 hover:bg-gray-700 disabled:bg-gray-500 text-white rounded-lg font-medium transition-colors border border-gray-500 flex items-center space-x-2"
-            >
-              <span>🗑️</span>
-              <span>Clear</span>
-            </button>
+          {/* Header with buttons and interval selector */}
+          <div className="flex justify-between items-center mb-6">
+            {/* Auto-populate buttons */}
+            <div className="flex space-x-4">
+              <button
+                onClick={loadTopMarketCap}
+                disabled={loading}
+                className="px-6 py-3 bg-red-600 hover:bg-red-700 disabled:bg-gray-600 text-white rounded-lg font-medium transition-colors border border-red-500 flex items-center space-x-2"
+              >
+                <span>📊</span>
+                <span>Top Market Cap</span>
+              </button>
+              <button
+                onClick={loadTrendingSearch}
+                disabled={loading}
+                className="px-6 py-3 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 text-white rounded-lg font-medium transition-colors border border-green-500 flex items-center space-x-2"
+              >
+                <span>🔥</span>
+                <span>Trending Search</span>
+              </button>
+              <button
+                onClick={clearAllTickers}
+                disabled={loading}
+                className="px-6 py-3 bg-gray-600 hover:bg-gray-700 disabled:bg-gray-500 text-white rounded-lg font-medium transition-colors border border-gray-500 flex items-center space-x-2"
+              >
+                <span>🗑️</span>
+                <span>Clear</span>
+              </button>
+            </div>
+
+            {/* Interval selector */}
+            <div className="flex items-center space-x-3">
+              <span className="text-white font-medium">Select Interval:</span>
+              <div className="flex space-x-1 bg-gray-800 p-1 rounded-lg border border-gray-600">
+                {intervals.map((interval) => (
+                  <button
+                    key={interval}
+                    onClick={() => setSelectedInterval(interval)}
+                    className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                      selectedInterval === interval
+                        ? 'bg-blue-600 text-white border border-blue-500'
+                        : 'text-gray-300 hover:text-white hover:bg-gray-700'
+                    }`}
+                  >
+                    {interval}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
 
           {/* Loading indicator */}
