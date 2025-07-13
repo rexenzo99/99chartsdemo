@@ -1163,9 +1163,9 @@ function App() {
       </div>
 
       <div className="w-full max-w-4xl">
-        {/* Chart iframe - Square aspect ratio */}
-        <div className="mb-8">
-          <div className="w-full aspect-square border rounded-lg overflow-hidden bg-gray-800 border-gray-700">
+        {/* Chart iframe - Responsive height to ensure buttons are visible */}
+        <div className="mb-6">
+          <div className="w-full h-[60vh] max-h-[600px] border rounded-lg overflow-hidden bg-gray-800 border-gray-700">
             <iframe
               key={`chart-${currentIndex}-${selectedInterval}`}
               src={getCurrentChartUrl()}
@@ -1177,7 +1177,7 @@ function App() {
         </div>
 
         {/* Action buttons */}
-        <div className="flex justify-center space-x-8">
+        <div className="flex justify-center space-x-8 pb-8">
           <button
             onClick={() => recordChoice('red')}
             className="w-20 h-20 bg-red-500 hover:bg-red-600 text-white rounded-full font-bold text-2xl transition-colors shadow-lg border-2 border-red-400"
