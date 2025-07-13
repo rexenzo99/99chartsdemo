@@ -299,6 +299,7 @@ function App() {
             right: updatedLosers[0]
           });
         }
+        setTournamentProcessing(false); // Re-enable clicks
         // setupNextMatchup will be triggered by useEffect
       }, 100);
       
