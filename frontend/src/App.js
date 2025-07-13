@@ -848,12 +848,12 @@ function App() {
       <div className="min-h-screen bg-gray-900 p-6">
         <div className="max-w-7xl mx-auto">
           {/* Tournament Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-white mb-4">🏆 Tournament Mode</h1>
-            <p className="text-gray-300 text-lg">
+          <div className="text-center mb-6">
+            <h1 className="text-3xl font-bold text-white mb-2">🏆 Tournament Mode</h1>
+            <p className="text-gray-300 text-lg mb-2">
               Choose the better chart - Head to Head
             </p>
-            <div className="mt-4 text-sm text-gray-400">
+            <div className="text-sm text-gray-400">
               {status.phase} | Remaining: {status.remaining} | Eliminated: {status.eliminated}
             </div>
           </div>
