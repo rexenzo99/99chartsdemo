@@ -339,8 +339,8 @@ function App() {
 
   // Auto-setup next matchup when tournament state changes
   useEffect(() => {
-    // Only setup next matchup if we're in tournament screen and don't have a current matchup
-    if (currentScreen === 'tournament' && (!currentMatchup.left || !currentMatchup.right)) {
+    // Only setup next matchup if we're in tournament screen, not processing, and don't have a current matchup
+    if (currentScreen === 'tournament' && !tournamentProcessing && (!currentMatchup.left || !currentMatchup.right)) {
       if (tournamentPhase === 'winners' && winnersbracket.length >= 2) {
         console.log('Setting up winners bracket matchup');
         setupNextMatchup();
@@ -349,7 +349,7 @@ function App() {
         setupNextMatchup();
       }
     }
-  }, [winnersbracket, losersbracket, tournamentPhase, currentScreen, currentMatchup]);
+  }, [winnersbracket, losersbracket, tournamentPhase, currentScreen, currentMatchup, tournamentProcessing]);
 
   const setupNextMatchup = () => {
     if (tournamentPhase === 'winners' && winnersbracket.length >= 2) {
