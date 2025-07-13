@@ -990,9 +990,9 @@ function App() {
               <h1 className="text-4xl font-bold text-white mb-4">🏆 Your Favorite Chart!</h1>
             </div>
 
-            {/* Winner chart display - wide format */}
-            <div className="mb-8">
-              <div className="w-full h-96 border-4 border-yellow-500 rounded-lg overflow-hidden bg-gray-800 shadow-2xl">
+            {/* Winner chart display - vertical format */}
+            <div className="mb-8 flex justify-center">
+              <div className="w-2/3 h-[600px] border-4 border-yellow-500 rounded-lg overflow-hidden bg-gray-800 shadow-2xl">
                 <iframe
                   key={`winner-${winnerChart?.pairAddress}-${selectedInterval}`}
                   src={getChartUrl(winnerChart)}
