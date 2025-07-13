@@ -1010,7 +1010,6 @@ function App() {
                   <tr>
                     <th className="px-6 py-4 text-left text-white font-bold">Rank</th>
                     <th className="px-6 py-4 text-left text-white font-bold">Symbol</th>
-                    <th className="px-6 py-4 text-center text-white font-bold">Score</th>
                     <th className="px-6 py-4 text-center text-white font-bold">Win</th>
                     <th className="px-6 py-4 text-center text-white font-bold">Lose</th>
                   </tr>
