@@ -380,20 +380,6 @@ function App() {
     }
   };
 
-  // Auto-setup next matchup when tournament state changes
-  useEffect(() => {
-    // Only setup next matchup if we're in tournament screen, not processing, and don't have a current matchup
-    if (currentScreen === 'tournament' && !tournamentProcessing && (!currentMatchup.left || !currentMatchup.right)) {
-      if (tournamentPhase === 'winners' && winnersbracket.length >= 2) {
-        console.log('Setting up winners bracket matchup');
-        setupNextMatchup();
-      } else if (tournamentPhase === 'losers' && losersbracket.length >= 2) {
-        console.log('Setting up losers bracket matchup');
-        setupNextMatchup();
-      }
-    }
-  }, [winnersbracket, losersbracket, tournamentPhase, currentScreen, currentMatchup, tournamentProcessing]);
-
   const setupNextMatchup = () => {
     if (tournamentPhase === 'winners' && winnersbracket.length >= 2) {
       // Ensure we don't match the same chart against itself
