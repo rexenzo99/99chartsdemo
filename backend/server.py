@@ -13,8 +13,9 @@ import uuid
 
 app = FastAPI(title="Charts Demo API")
 
-# Add security middleware
-app.add_middleware(HTTPSRedirectMiddleware)
+# Add security middleware  
+# Note: HTTPS redirect should be handled at infrastructure level in production
+# app.add_middleware(HTTPSRedirectMiddleware)  # Commented out - causing POST issues
 app.add_middleware(TrustedHostMiddleware, allowed_hosts=["*"])
 
 # Security headers middleware
