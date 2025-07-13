@@ -875,6 +875,9 @@ function App() {
   // Tournament Screen (Step 3)
   if (currentScreen === 'tournament') {
     const getChartUrl = (chart) => {
+      // Add null safety check
+      if (!chart) return '';
+      
       const intervalMap = {
         '15m': '15',
         '30m': '30', 
