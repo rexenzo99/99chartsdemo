@@ -94,6 +94,7 @@ function App() {
   const [finalRankings, setFinalRankings] = useState([]); // Top 3 results
   const [showConfetti, setShowConfetti] = useState(false); // Confetti animation state
   const [trendingMetadataSessionId, setTrendingMetadataSessionId] = useState(null); // For cached trending data
+  const [tournamentProcessing, setTournamentProcessing] = useState(false); // Prevent double-clicks
 
   useEffect(() => {
     if (currentScreen === 'hot-or-not' && !usingCustomTickers) {
