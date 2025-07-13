@@ -257,9 +257,6 @@ function App() {
       setLosersbracket(prev => [...prev, updatedLoser]);
       setWinnersbracket(updatedWinners);
       
-      // Clear current matchup to prevent double-clicks
-      setCurrentMatchup({ left: null, right: null });
-      
       // Use setTimeout to ensure state updates are processed
       setTimeout(() => {
         if (updatedWinners.length === 1) {
@@ -285,9 +282,6 @@ function App() {
       // Update state in batch
       setEliminatedCharts(prev => [...prev, updatedLoser]);
       setLosersbracket(updatedLosers);
-      
-      // Clear current matchup to prevent double-clicks
-      setCurrentMatchup({ left: null, right: null });
       
       // Use setTimeout to ensure state updates are processed
       setTimeout(() => {
