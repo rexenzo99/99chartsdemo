@@ -253,19 +253,51 @@ function App() {
       // Add winner back to winners bracket
       const updatedWinners = [...remainingWinners, winner];
       
-      // Update state in batch
+      console.log('Winners bracket updated:', updatedWinners.length, 'remaining');
+      
+      // Update state
       setLosersbracket(prev => [...prev, updatedLoser]);
       setWinnersbracket(updatedWinners);
       
-      // Use setTimeout to ensure state updates are processed
-      setTimeout(() => {
-        if (updatedWinners.length === 1) {
-          // Winners bracket complete, start losers bracket
-          setTournamentPhase('losers');
-        }
-        setTournamentProcessing(false); // Re-enable clicks
-        // setupNextMatchup will be triggered by useEffect
-      }, 100);
+      // Determine next action
+      if (updatedWinners.length === 1) {
+        // Winners bracket complete, move to losers bracket
+        console.log('Winners bracket complete, moving to losers bracket');
+        setTournamentPhase('losers');
+        
+        // Check if we have enough for losers bracket
+        setTimeout(() => {
+          const currentLosers = [...losersbracket, updatedLoser];
+          if (currentLosers.length >= 2) {
+            setCurrentMatchup({
+              left: currentLosers[0],
+              right: currentLosers[1]
+            });
+          } else {
+            // Not enough for losers bracket, go to grand finals
+            setTournamentPhase('grandfinals');
+            setCurrentMatchup({
+              left: updatedWinners[0],
+              right: currentLosers[0]
+            });
+          }
+          setTournamentProcessing(false);
+        }, 200);
+        
+      } else if (updatedWinners.length >= 2) {
+        // Continue winners bracket
+        console.log('Continuing winners bracket');
+        setTimeout(() => {
+          setCurrentMatchup({
+            left: updatedWinners[0],
+            right: updatedWinners[1]
+          });
+          setTournamentProcessing(false);
+        }, 200);
+      } else {
+        // Something went wrong, reset processing
+        setTournamentProcessing(false);
+      }
       
     } else if (tournamentPhase === 'losers') {
       // Losers bracket - loser is eliminated
@@ -279,25 +311,36 @@ function App() {
       
       const updatedLosers = [...remainingLosers, winner];
       
-      // Update state in batch
+      console.log('Losers bracket updated:', updatedLosers.length, 'remaining');
+      
+      // Update state
       setEliminatedCharts(prev => [...prev, updatedLoser]);
       setLosersbracket(updatedLosers);
       
-      // Use setTimeout to ensure state updates are processed
+      // Determine next action
       setTimeout(() => {
         if (updatedLosers.length === 1 && winnersbracket.length === 1) {
           // Ready for grand finals
+          console.log('Setting up grand finals');
           setTournamentPhase('grandfinals');
           setCurrentMatchup({
             left: winnersbracket[0],
             right: updatedLosers[0]
           });
+        } else if (updatedLosers.length >= 2) {
+          // Continue losers bracket
+          console.log('Continuing losers bracket');
+          setCurrentMatchup({
+            left: updatedLosers[0],
+            right: updatedLosers[1]
+          });
         }
-        setTournamentProcessing(false); // Re-enable clicks
-        // setupNextMatchup will be triggered by useEffect
-      }, 100);
+        setTournamentProcessing(false);
+      }, 200);
       
     } else if (tournamentPhase === 'grandfinals') {
+      console.log('Grand finals decision');
+      
       // Grand finals logic
       if (winner.tournamentId === winnersbracket[0].tournamentId) {
         // Winners bracket champion wins - tournament over
