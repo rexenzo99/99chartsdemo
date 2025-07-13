@@ -1019,7 +1019,6 @@ function App() {
                     const symbol = chart.baseToken?.symbol || 'UNKNOWN';
                     const wins = Math.floor(Math.random() * 5) + index === 0 ? 4 : index === 1 ? 3 : 2; // Mock wins for now
                     const losses = chart.losses || 0;
-                    const score = wins - (losses * 0.5); // Calculate score
                     
                     return (
                       <tr key={index} className={`border-t border-gray-600 ${index === 0 ? 'bg-yellow-900/20' : index === 1 ? 'bg-gray-700/30' : 'bg-orange-900/20'}`}>
@@ -1035,9 +1034,6 @@ function App() {
                         </td>
                         <td className="px-6 py-4 text-white font-bold text-lg">
                           {symbol}USDT
-                        </td>
-                        <td className="px-6 py-4 text-center text-white font-bold text-lg">
-                          {score.toFixed(1)}
                         </td>
                         <td className="px-6 py-4 text-center text-green-400 font-bold text-lg">
                           {wins}
