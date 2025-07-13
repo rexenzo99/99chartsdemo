@@ -314,6 +314,7 @@ function App() {
         ]);
         setShowConfetti(true); // Trigger confetti animation
         setCurrentScreen('results'); // Switch to results screen
+        setTournamentProcessing(false); // Re-enable for next session
       } else {
         // Losers bracket champion wins
         const winnersChamp = winnersbracket[0];
@@ -326,6 +327,7 @@ function App() {
             left: winner, // Losers bracket champion
             right: resetWinner // Winners bracket champion with 1 loss
           });
+          setTournamentProcessing(false); // Re-enable clicks
         } else {
           // Winners bracket champion has already lost once, losers bracket champion wins tournament
           setFinalRankings([
@@ -335,6 +337,7 @@ function App() {
           ]);
           setShowConfetti(true); // Trigger confetti animation
           setCurrentScreen('results'); // Switch to results screen
+          setTournamentProcessing(false); // Re-enable for next session
         }
       }
     }
