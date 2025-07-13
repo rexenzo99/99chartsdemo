@@ -894,8 +894,7 @@ function App() {
               {/* Right Chart */}
               <div className="space-y-4">
                 <div className="text-center">
-                  <h3 className="text-xl font-bold text-white mb-2">Chart B</h3>
-                  <p className="text-gray-400">Anonymous Chart</p>
+                  <h3 className="text-xl font-bold text-white mb-3">Chart B</h3>
                 </div>
                 <div 
                   className="w-full aspect-square border-4 rounded-lg overflow-hidden bg-gray-800 transition-all duration-300 hover:border-blue-500 border-gray-600"
