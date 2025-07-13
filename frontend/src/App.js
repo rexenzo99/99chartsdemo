@@ -229,6 +229,13 @@ function App() {
   };
 
   const selectTournamentWinner = (winner) => {
+    // Prevent double-clicks
+    if (tournamentProcessing) {
+      console.log('Tournament processing, ignoring click');
+      return;
+    }
+    
+    setTournamentProcessing(true);
     console.log('Tournament winner selected:', winner.tournamentId); // Debug log
     
     const loser = winner === currentMatchup.left ? currentMatchup.right : currentMatchup.left;
