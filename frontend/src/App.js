@@ -467,6 +467,7 @@ function App() {
     setFinalRankings([]);
     setShowConfetti(false); // Reset confetti
     setTrendingMetadataSessionId(null); // Reset trending metadata
+    setTournamentProcessing(false); // Reset processing state
     setCurrentScreen('ticker-selection');
   };
 
