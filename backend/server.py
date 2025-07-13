@@ -13,6 +13,10 @@ import uuid
 
 app = FastAPI(title="Charts Demo API")
 
+# Add security middleware
+app.add_middleware(HTTPSRedirectMiddleware)
+app.add_middleware(TrustedHostMiddleware, allowed_hosts=["*"])
+
 # CORS middleware
 app.add_middleware(
     CORSMiddleware,
