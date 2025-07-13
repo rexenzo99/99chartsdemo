@@ -123,7 +123,15 @@ function App() {
   };
 
   const recordChoice = async (choice) => {
-    if (!charts[currentIndex] || !sessionId) return;
+    if (!charts[currentIndex] || !sessionId) {
+      console.error('Missing required data:', { 
+        hasChart: !!charts[currentIndex], 
+        hasSessionId: !!sessionId,
+        currentIndex,
+        chartsLength: charts.length 
+      });
+      return;
+    }
 
     const choiceData = {
       session_id: sessionId,
@@ -138,8 +146,11 @@ function App() {
       timestamp: new Date().toISOString()
     };
 
+    console.log('Recording choice:', { choice, currentIndex, sessionId, backendUrl: BACKEND_URL });
+
     try {
-      await axios.post(`${BACKEND_URL}/api/record-choice`, choiceData);
+      const response = await axios.post(`${BACKEND_URL}/api/record-choice`, choiceData);
+      console.log('Choice recorded successfully:', response.data);
       
       // Update local choices state
       setChoices(prev => [...prev, choiceData]);
@@ -149,10 +160,25 @@ function App() {
         setCurrentIndex(currentIndex + 1);
       } else {
         // All charts completed, start tournament
+        console.log('Starting tournament with choices:', choices.length + 1);
         startTournament();
       }
     } catch (error) {
       console.error('Failed to record choice:', error);
+      console.error('Error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+        url: `${BACKEND_URL}/api/record-choice`
+      });
+      
+      // Still proceed locally even if API fails
+      setChoices(prev => [...prev, choiceData]);
+      if (currentIndex < charts.length - 1) {
+        setCurrentIndex(currentIndex + 1);
+      } else {
+        startTournament();
+      }
     }
   };
 
