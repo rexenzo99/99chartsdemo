@@ -985,9 +985,12 @@ function App() {
                       e.stopPropagation();
                       selectTournamentWinner(currentMatchup.right);
                     }}
-                    className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold text-lg transition-colors border-2 border-blue-500 shadow-lg"
+                    disabled={tournamentProcessing}
+                    className={`px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold text-lg transition-colors border-2 border-blue-500 shadow-lg ${
+                      tournamentProcessing ? 'opacity-50 cursor-not-allowed' : ''
+                    }`}
                   >
-                    Choose Chart B
+                    {tournamentProcessing ? 'Processing...' : 'Choose Chart B'}
                   </button>
                 </div>
               </div>
