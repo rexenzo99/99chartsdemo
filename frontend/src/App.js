@@ -266,6 +266,7 @@ function App() {
           // Winners bracket complete, start losers bracket
           setTournamentPhase('losers');
         }
+        setTournamentProcessing(false); // Re-enable clicks
         // setupNextMatchup will be triggered by useEffect
       }, 100);
       
